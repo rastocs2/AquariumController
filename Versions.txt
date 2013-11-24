@@ -1,0 +1,2 @@
+24.11.2013 - version 1.0
+  * Initial version without pH module and ORP module
