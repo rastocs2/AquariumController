@@ -263,9 +263,6 @@ void AQUA_temp::_wait_to_convert(void) {
   while(millis() < waiting) {
     if (digitalRead(_dqPin) > 0) {
       break;
-    } else {
-      continue;
     }
-    delayMicroseconds(50);
   }
 }
