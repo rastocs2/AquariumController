@@ -7,6 +7,7 @@
 #include <avr/sleep.h>
 #include <avr/power.h>
 #include <avr/wdt.h>
+#include <genieArduino.h>
 
 #include "AquariumController.h"
 #include "AQUA_relay.h"
@@ -15,7 +16,6 @@
 #include "AQUA_ph.h"
 #include "AQUA_orp.h"
 #include "AQUA_lcd.h"
-#include "genieArduino.h"
 
 AQUA_temp   objTEMP;
 AQUA_ph     objPH;
@@ -669,7 +669,7 @@ void setup() {
   }
 
   if(AQUA_DEBUG_MODE_ON == 1) Serial.println("Time object initialization...");
-  objTIME.init(AQUA_TIME_DATA_PIN, AQUA_TIME_CLOCK_PIN); //dataPin(SDA), clockPin(SCLK)
+  objTIME.init(AQUA_TIME_DATA_PIN, AQUA_TIME_CLOCK_PIN, DS_TYPE_3231); //dataPin(SDA), clockPin(SCLK)
 
   if(AQUA_DEBUG_MODE_ON == 1) Serial.println("Relay object initialization...");
   objRELAY.init(AQUA_RELAY_FIRST_PIN, AQUA_RELAY_ALARMS, AQUA_RELAY_TIMERS, AQUA_RELAY_TIMER_PARTS, AQUA_RELAY_ALARMS_ADDR, AQUA_RELAY_TIMERS_ADDR); //first pin number, number of alarms, number of timers, number of timer parts, alarms address, timers address

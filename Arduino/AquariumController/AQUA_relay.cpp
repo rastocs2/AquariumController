@@ -6,7 +6,7 @@
 */
 
 #include <avr/eeprom.h>
-#include "Arduino.h"
+#include <Arduino.h>
 #include "AQUA_relay.h"
 
 /*

@@ -5,60 +5,117 @@
   Author: Rastislav Birka
 */
 
-#include "Arduino.h"
+#include <avr/eeprom.h>
+#include <Arduino.h>
 #include "AQUA_time.h"
 
 /*
   Public Functions
 */
 
-void AQUA_time::init(uint8_t dataPin, uint8_t clockPin) {
+void AQUA_time::init(uint8_t dataPin, uint8_t clockPin, uint8_t dsType) {
   _dataPin = dataPin;
   _clockPin = clockPin;
+  _dsType = dsType;
   pinMode(_clockPin, OUTPUT);
   start();
 }
 
 void AQUA_time::setOutput(bool enable) {
-  uint8_t value = _readRegister(TIME_ADDR_CONTROL);
-  if((value & 128) != enable) {
-    value &= ~(1 << 7);
-    value |= (enable << 7);
-    _writeRegister(TIME_ADDR_CONTROL, value);
+  uint8_t value, addr, bit;
+  switch(_dsType) {
+    case DS_TYPE_3231:
+      addr = TIME_ADDR_CONTROL_3231;
+      bit = 2;
+      break;
+    case DS_TYPE_1307:
+    default:
+      addr = TIME_ADDR_CONTROL_1307;
+      bit = 7;
+  }
+  value = _readRegister(addr);
+  if((value & (1 << bit)) != enable) {
+    value &= ~(1 << bit);
+    value |= (enable << bit);
+    _writeRegister(addr, value);
   }
 }
 
 void AQUA_time::enableSQW(bool enable) {
-  uint8_t value = _readRegister(TIME_ADDR_CONTROL);
-  if((value & 16) != enable) {
-    value &= ~(1 << 4);
-    value |= (enable << 4);
-    _writeRegister(TIME_ADDR_CONTROL, value);
+  uint8_t value, addr, bit;
+  switch(_dsType) {
+    case DS_TYPE_3231:
+      addr = TIME_ADDR_CONTROL_3231;
+      bit = 6;
+      break;
+    case DS_TYPE_1307:
+    default:
+      addr = TIME_ADDR_CONTROL_1307;
+      bit = 4;
+  }
+  value = _readRegister(addr);
+  if((value & (1 << bit)) != enable) {
+    value &= ~(1 << bit);
+    value |= (enable << bit);
+    _writeRegister(addr, value);
   }
 }
 
 void AQUA_time::setSQWRate(int rate) {
-  uint8_t value = _readRegister(TIME_ADDR_CONTROL);
-  value &= ~(3);
+  uint8_t value, addr, rs;
+  if(rate > 3) {
+    rate = 3;
+  }
+  switch(_dsType) {
+    case DS_TYPE_3231:
+      addr = TIME_ADDR_CONTROL_3231;
+      rs = 24; //00011000
+      rate <<= 3;
+      break;
+    case DS_TYPE_1307:
+    default:
+      addr = TIME_ADDR_CONTROL_1307;
+      rs = 3;
+  }
+  value = _readRegister(addr);
+  value &= ~(rs);
   value |= (rate);
-  _writeRegister(TIME_ADDR_CONTROL, value);
+  _writeRegister(addr, value);
 }
 
 void AQUA_time::start() {
-  uint8_t value = _readRegister(TIME_ADDR_SEC);
+  uint8_t value, addr;
+  switch(_dsType) {
+    case DS_TYPE_3231:
+      addr = TIME_ADDR_CONTROL_3231;
+      break;
+    case DS_TYPE_1307:
+    default:
+      addr = TIME_ADDR_SEC;
+  }
+  value = _readRegister(addr);
   if((value & 128) != 0) {
     value &= ~(1 << 7);
     value |= (0 << 7);
-    _writeRegister(TIME_ADDR_SEC, value);
+    _writeRegister(addr, value);
   }
 }
 
 void AQUA_time::stop() {
-  uint8_t value = _readRegister(TIME_ADDR_SEC);
+  uint8_t value, addr;
+  switch(_dsType) {
+    case DS_TYPE_3231:
+      addr = TIME_ADDR_CONTROL_3231;
+      break;
+    case DS_TYPE_1307:
+    default:
+      addr = TIME_ADDR_SEC;
+  }
+  value = _readRegister(addr);
   if((value & 128) != 1) {
     value &= ~(1 << 7);
     value |= (1 << 7);
-    _writeRegister(TIME_ADDR_SEC, value);
+    _writeRegister(addr, value);
   }
 }
 
@@ -214,7 +271,7 @@ void AQUA_time::_readDateTime() {
   _sendStop();
 }
 
-uint8_t	AQUA_time::_decode(uint8_t value) {
+uint8_t AQUA_time::_decode(uint8_t value) {
   uint8_t decoded = (value & 15) + 10 * ((value & (15 << 4)) >> 4);
   return decoded;
 }

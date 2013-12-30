@@ -6,7 +6,7 @@
 */
 
 #include <avr/eeprom.h>
-#include "Arduino.h"
+#include <Arduino.h>
 #include "AQUA_lcd.h"
 
 void AQUA_lcd::init(uint8_t timeout_address) {
