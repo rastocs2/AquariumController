@@ -91,7 +91,7 @@ float AQUA_temp::getTemp(bool calibrate) {
 bool AQUA_temp::calibration(uint8_t point, AQUA_tempCalibrationPoint *values) {
   bool res = false;
 
-  if (point < _pointCount && point >= 0 && values->refValue <= 4999 && values->refValue >= 0 && values->actValue <= 4999 && values->actValue >= 0) {
+  if(point < _pointCount && point >= 0 && values->refValue <= 4999 && values->refValue >= 0 && values->actValue <= 4999 && values->actValue >= 0) {
     if(values->state != _calData[point].state || values->refValue != _calData[point].refValue || values->actValue != _calData[point].actValue) {
       _calData[point].state = values->state;
       _calData[point].refValue = values->refValue;
@@ -261,7 +261,7 @@ void AQUA_temp::_write_bit(uint8_t value) {
 void AQUA_temp::_wait_to_convert(void) {
   unsigned long waiting = millis() + 750;
   while(millis() < waiting) {
-    if (digitalRead(_dqPin) > 0) {
+    if(digitalRead(_dqPin) > 0) {
       break;
     }
   }

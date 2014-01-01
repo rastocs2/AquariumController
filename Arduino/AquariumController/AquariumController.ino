@@ -172,7 +172,7 @@ void lcdEventHandler(void) {
             sprintf(row, "%5d\0", 0);
             genieWriteStr(GENIE_STR_CAL_KEY, row);
             if(calibration == GENIE_CALIBRATION_TEMP) {
-              for (uint8_t i = 0; i < AQUA_TEMP_CALIBRATE_POINTS; i++) {
+              for(uint8_t i = 0; i < AQUA_TEMP_CALIBRATE_POINTS; i++) {
                 tempCalPoint[i] = objTEMP.readCalibrationPoint(i);
                 genieWriteObject(GENIE_OBJ_4DBUTTON, i + GENIE_BTN_CAL1_STATE, tempCalPoint[i].state);
                 sprintf(row, "%2d.%02d\0", (int)tempCalPoint[i].refValue, (int)(tempCalPoint[i].refValue*100)%100);
@@ -185,7 +185,7 @@ void lcdEventHandler(void) {
                 genieWriteStr(i + GENIE_STR_CAl1_ACT_NEW, row);
               }
             } else if(calibration == GENIE_CALIBRATION_PH) {
-              for (uint8_t i = 0; i < AQUA_PH_CALIBRATE_POINTS; i++) {
+              for(uint8_t i = 0; i < AQUA_PH_CALIBRATE_POINTS; i++) {
                 phCalPoint[i] = objPH.readCalibrationPoint(i);
                 genieWriteObject(GENIE_OBJ_4DBUTTON, i + GENIE_BTN_CAL1_STATE, phCalPoint[i].state);
                 sprintf(row, "%2d.%02d\0", (int)phCalPoint[i].refValue, (int)(phCalPoint[i].refValue*100)%100);
@@ -198,7 +198,7 @@ void lcdEventHandler(void) {
                 genieWriteStr(i + GENIE_STR_CAl1_ACT_NEW, row);
               }
             } else if(calibration == GENIE_CALIBRATION_ORP) {
-              for (uint8_t i = 0; i < AQUA_ORP_CALIBRATE_POINTS; i++) {
+              for(uint8_t i = 0; i < AQUA_ORP_CALIBRATE_POINTS; i++) {
                 orpCalPoint[i] = objORP.readCalibrationPoint(i);
                 genieWriteObject(GENIE_OBJ_4DBUTTON, i + GENIE_BTN_CAL1_STATE, orpCalPoint[i].state);
                 sprintf(row, "%+5d\0", (int)orpCalPoint[i].refValue);
@@ -238,7 +238,7 @@ void lcdEventHandler(void) {
           genieWriteObject(GENIE_OBJ_STRINGS, GENIE_STR_TIMER_INFO, settingsRelay - AQUA_RELAY_TIMERS);
           sprintf(row, "%5d\0", 0);
           genieWriteStr(GENIE_STR_TIMER_KEY, row);
-          for (uint8_t i = 0; i < AQUA_RELAY_TIMER_PARTS; i++) {
+          for(uint8_t i = 0; i < AQUA_RELAY_TIMER_PARTS; i++) {
             settingsTimer[i] = objRELAY.readRelayTimerPart(settingsRelay, i);
             sprintf(row, "%2d:%02d\0", (int)(settingsTimer[i].from/60), settingsTimer[i].from%60);
             genieWriteStr(i*2 + GENIE_STR_TIMER1_START, row);
@@ -364,7 +364,7 @@ void lcdEventHandler(void) {
             iValue = keyboardString.substring(0, iPos).toInt()*60 + keyboardString.substring(iPos+1, iPos+3).toInt();
           } else {
             iValue = keyboardString.toInt();
-            if (iValue < 24) {
+            if(iValue < 24) {
               iValue*= 60;
             }
           }
@@ -451,7 +451,7 @@ void lcdEventHandler(void) {
         } else if(Event.reportObject.index >= GENIE_BTN_CAL1_READ_ACT && Event.reportObject.index <= GENIE_BTN_CAL3_READ_ACT) { //Calibration - "Read" buttons
           if(calibration == GENIE_CALIBRATION_TEMP) {
             float temp = 0;
-            for (uint8_t i = 0; i < 4; i++) {
+            for(uint8_t i = 0; i < 4; i++) {
               temp+= objTEMP.getTemp(1);
               delay(1);
             }
@@ -459,7 +459,7 @@ void lcdEventHandler(void) {
             sprintf(row, "%2d.%02d\0", (int)tempCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue, (int)(tempCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue*100)%100);
           } else if(calibration == GENIE_CALIBRATION_PH) {
             float pH = 0;
-            for (uint8_t i = 0; i < 4; i++) {
+            for(uint8_t i = 0; i < 4; i++) {
               pH+= objPH.getPH(1);
               delay(1);
             }
@@ -467,7 +467,7 @@ void lcdEventHandler(void) {
             sprintf(row, "%2d.%02d\0", (int)phCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue, (int)(phCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue*100)%100);
           } else if(calibration == GENIE_CALIBRATION_ORP) {
             int orp = 0;
-            for (uint8_t i = 0; i < 4; i++) {
+            for(uint8_t i = 0; i < 4; i++) {
               orp+= objORP.getORP(1);
               delay(1);
             }
@@ -483,15 +483,15 @@ void lcdEventHandler(void) {
           }
         } else if(Event.reportObject.index == GENIE_BTN_SAVE_CALIBRATION) { //Calibration - "Save" button
           if(calibration == GENIE_CALIBRATION_TEMP) {
-            for (uint8_t i = 0; i < AQUA_TEMP_CALIBRATE_POINTS; i++) {
+            for(uint8_t i = 0; i < AQUA_TEMP_CALIBRATE_POINTS; i++) {
               objTEMP.calibration(i, &tempCalPoint[i]);
             }
           } else if(calibration == GENIE_CALIBRATION_PH) {
-            for (uint8_t i = 0; i < AQUA_PH_CALIBRATE_POINTS; i++) {
+            for(uint8_t i = 0; i < AQUA_PH_CALIBRATE_POINTS; i++) {
               objPH.calibration(i, &phCalPoint[i]);
             }
           } else if(calibration == GENIE_CALIBRATION_ORP) {
-            for (uint8_t i = 0; i < AQUA_ORP_CALIBRATE_POINTS; i++) {
+            for(uint8_t i = 0; i < AQUA_ORP_CALIBRATE_POINTS; i++) {
               objORP.calibration(i, &orpCalPoint[i]);
             }
           }
@@ -586,14 +586,14 @@ void checkRelay(uint16_t tstamp, float temp, float pH) {
   bool relayStatus;
   uint8_t i;
 
-  for (i = 0; i < relayCount; i++) {
-    if (objRELAY.isManual(i)) {
+  for(i = 0; i < relayCount; i++) {
+    if(objRELAY.isManual(i)) {
       relayStatus = objRELAY.getByManual(i);
-    } else if (i == AQUA_TEMP_RELAY_COOLING || i == AQUA_TEMP_RELAY_HEATING) {
+    } else if(i == AQUA_TEMP_RELAY_COOLING || i == AQUA_TEMP_RELAY_HEATING) {
       relayStatus = objRELAY.getByAlarm(i, floor(temp*100));
-    } else if (i == AQUA_PH_RELAY_REDUCTION || i == AQUA_PH_RELAY_INCREASE) {
+    } else if(i == AQUA_PH_RELAY_REDUCTION || i == AQUA_PH_RELAY_INCREASE) {
       relayStatus = objRELAY.getByAlarm(i, floor(pH*100));
-    } else if (i >= AQUA_RELAY_ALARMS) {
+    } else if(i >= AQUA_RELAY_ALARMS) {
       relayStatus = objRELAY.getByTimer(i, tstamp);
     } else {
       relayStatus = objRELAY.get(i);

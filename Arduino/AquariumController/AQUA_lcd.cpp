@@ -36,7 +36,7 @@ uint8_t AQUA_lcd::getActualForm(void) {
 }
 
 void AQUA_lcd::setActualForm(uint8_t form) {
-  if (form >= GENIE_FORM_MAIN && form <= GENIE_FORM_CALIBRATION) {
+  if(form >= GENIE_FORM_MAIN && form <= GENIE_FORM_CALIBRATION) {
     _actualForm = form;
   }
 }
