@@ -47,7 +47,7 @@ typedef struct {
 
 class AQUA_time {
   public:
-    void init(uint8_t dataPin, uint8_t clockPin, uint8_t dsType = DS_TYPE_1307);
+    void init(uint8_t dataPin, uint8_t clockPin, uint8_t dsType = DS_TYPE_1307, bool useDST = false, uint8_t timeZone = 0);
     void setOutput(bool enable);
     void enableSQW(bool enable);
     void setSQWRate(int rate);
@@ -57,11 +57,15 @@ class AQUA_time {
     void setDate(uint8_t day, uint8_t mon, uint16_t year);
     void setTime(uint8_t hour, uint8_t min, uint8_t sec);
     void setWday(uint8_t wday);
+    void setDST(bool useDST);
+    void setTimeZone(int timeZone);
     AQUA_datetime getDateTime();
 
   private:
     uint8_t _dataPin, _clockPin, _dsType;
     uint8_t _regDateTime[8];
+    bool _useDST; //whether will used DTS or no
+    uint8_t _timeZone; //it is used only for calculating DTS and only for time zone >= 0
 
     void _sendStart(uint8_t addr);
     void _sendStop();

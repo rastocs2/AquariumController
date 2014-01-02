@@ -13,10 +13,12 @@
   Public Functions
 */
 
-void AQUA_time::init(uint8_t dataPin, uint8_t clockPin, uint8_t dsType) {
+void AQUA_time::init(uint8_t dataPin, uint8_t clockPin, uint8_t dsType, bool useDST, uint8_t timeZone) {
   _dataPin = dataPin;
   _clockPin = clockPin;
   _dsType = dsType;
+  _useDST = useDST;
+  _timeZone = timeZone;
   pinMode(_clockPin, OUTPUT);
   start();
 }
@@ -120,7 +122,7 @@ void AQUA_time::stop() {
 }
 
 void AQUA_time::setDate(uint8_t day, uint8_t mon, uint16_t year) {
-  if (day > 0 && day < 32 && mon > 0 && mon < 13 && year > 1999 && year < 3000) {
+  if(day > 0 && day < 32 && mon > 0 && mon < 13 && year > 1999 && year < 3000) {
     year -= 2000;
     _writeRegister(TIME_ADDR_YEAR, _encode(year));
     _writeRegister(TIME_ADDR_MON, _encode(mon));
@@ -129,7 +131,7 @@ void AQUA_time::setDate(uint8_t day, uint8_t mon, uint16_t year) {
 }
 
 void AQUA_time::setTime(uint8_t hour, uint8_t min, uint8_t sec) {
-  if (hour >= 0 && hour < 24 && min >= 0 && min < 60 && sec >= 0 && sec < 60) {
+  if(hour >= 0 && hour < 24 && min >= 0 && min < 60 && sec >= 0 && sec < 60) {
     _writeRegister(TIME_ADDR_HOUR, _encode(hour));
     _writeRegister(TIME_ADDR_MIN, _encode(min));
     _writeRegister(TIME_ADDR_SEC, _encode(sec));
@@ -137,9 +139,17 @@ void AQUA_time::setTime(uint8_t hour, uint8_t min, uint8_t sec) {
 }
 
 void AQUA_time::setWday(uint8_t wday) {
-  if (wday > 0 && wday < 8) {
+  if(wday > 0 && wday < 8) {
     _writeRegister(TIME_ADDR_WDAY, wday);
   }
+}
+
+void AQUA_time::setDST(bool useDST) {
+  _useDST = useDST;
+}
+
+void AQUA_time::setTimeZone(int timeZone) {
+  _timeZone = timeZone;
 }
 
 AQUA_datetime AQUA_time::getDateTime() {
@@ -153,6 +163,32 @@ AQUA_datetime AQUA_time::getDateTime() {
   datetimeStruct.day  = _decode(_regDateTime[4]);
   datetimeStruct.mon  = _decode(_regDateTime[5]);
   datetimeStruct.year = _decode(_regDateTime[6]) + 2000;
+
+  if(_useDST) {
+    //DST start in last sunday in march about 01:00 GMT and end in last sunday in october about 01:00 GMT
+    //sunday = 7th day in week according to ISO 8601
+    if(datetimeStruct.mon > 3 && datetimeStruct.mon < 10) {
+      datetimeStruct.hour++;
+    } else if(datetimeStruct.mon == 3 && datetimeStruct.day > 24) {
+      if(datetimeStruct.wday == 7) {
+        if((datetimeStruct.hour - _timeZone) > 0) {
+          datetimeStruct.hour++;
+        }
+      } else if((31 - datetimeStruct.day + datetimeStruct.wday) <= 7) {
+        datetimeStruct.hour++;
+      }
+    } else if(datetimeStruct.mon == 10 && datetimeStruct.day < 25) {
+      datetimeStruct.hour++;
+    } else if(datetimeStruct.mon == 10) {
+      if(datetimeStruct.wday == 7) {
+        if((datetimeStruct.hour - _timeZone) < 1) {
+          datetimeStruct.hour++;
+        }
+      } else if((31 - datetimeStruct.day + datetimeStruct.wday) >= 7) {
+        datetimeStruct.hour++;
+      }
+    }
+  }
 
   return datetimeStruct;
 }
@@ -199,7 +235,7 @@ void AQUA_time::_sendNack() {
 void AQUA_time::_waitForAck() {
   pinMode(_dataPin, INPUT);
   digitalWrite(_clockPin, HIGH);
-  while (_dataPin == LOW) {
+  while(_dataPin == LOW) {
   }
   digitalWrite(_clockPin, LOW);
 }
@@ -209,7 +245,7 @@ uint8_t AQUA_time::_readByte() {
   uint8_t currentBit;
 
   pinMode(_dataPin, INPUT);
-  for (int i = 0; i < 8; ++i) {
+  for(int i = 0; i < 8; ++i) {
     digitalWrite(_clockPin, HIGH);
     currentBit = digitalRead(_dataPin);
     value |= (currentBit << 7-i);
@@ -260,9 +296,9 @@ void AQUA_time::_readDateTime() {
   _sendStart(TIME_ADDR_READ);
   _waitForAck();
 
-  for (int i = 0; i < 8; i++) {
+  for(int i = 0; i < 8; i++) {
     _regDateTime[i] = _readByte();
-    if (i < 7) {
+    if(i < 7) {
       _sendAck();
     } else {
       _sendNack();
