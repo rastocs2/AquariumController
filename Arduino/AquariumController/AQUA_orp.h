@@ -16,19 +16,21 @@ typedef struct {
 
 class AQUA_orp {
   public:
-    void init(uint8_t dqPin, uint8_t calibrate_points, uint8_t calibrate_address);
+    void init(uint8_t voutPin, uint8_t vocmPin, uint8_t calibrate_points, uint8_t calibrate_address, float vRef = 5.00);
     int getORP(bool calibrate = 0);
     bool calibration(uint8_t point, AQUA_orpCalibrationPoint *values);
     AQUA_orpCalibrationPoint readCalibrationPoint(uint8_t point);
 
   private:
-    uint8_t _dqPin;
+    uint8_t _voutPin;
+    uint8_t _vocmPin;
     uint8_t _pointCount;
     uint8_t _calibrateAddress;
     AQUA_orpCalibrationPoint* _calData;
     AQUA_orpCalibrationPoint* _usedData;
     uint8_t _usedPoints;
     float* _const;
+    float _vRef, _constPerUnit;
 
     void _setCalibrationValues();
 };

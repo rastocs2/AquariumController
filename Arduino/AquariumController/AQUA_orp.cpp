@@ -6,21 +6,24 @@
 */
 
 #include <avr/eeprom.h>
-#include "Arduino.h"
+#include <Arduino.h>
 #include "AQUA_orp.h"
 
 /*
   Public Functions
 */
 
-void AQUA_orp::init(uint8_t dqPin, uint8_t calibrate_points, uint8_t calibrate_address) {
+void AQUA_orp::init(uint8_t voutPin, uint8_t vocmPin, uint8_t calibrate_points, uint8_t calibrate_address, float vRef) {
   uint16_t value, position;
   uint8_t i;
   bool negative;
 
-  _dqPin = dqPin;
+  _voutPin = voutPin;
+  _vocmPin = vocmPin;
   _pointCount = calibrate_points;
   _calibrateAddress = calibrate_address;
+  _vRef = vRef;
+  _constPerUnit = _vRef*1000.00/1023.00;
   _calData = new AQUA_orpCalibrationPoint[_pointCount];
   _usedData = new AQUA_orpCalibrationPoint[_pointCount];
   _const = new float[(_pointCount - 1)*2];
@@ -56,14 +59,20 @@ void AQUA_orp::init(uint8_t dqPin, uint8_t calibrate_points, uint8_t calibrate_a
     }
   }
   _setCalibrationValues();
-  pinMode(_dqPin, INPUT);
 }
 
-//dokoncit
+/*
+LMP91200
+ORP = VOUT - VOCM
+*/
 int AQUA_orp::getORP(bool calibrate) {
-  int res = 0;
+  int vout, vocm;
+  int res;
 
-//  res = random(-400,401);
+  vout = analogRead(_voutPin);
+  vocm = analogRead(_vocmPin);
+  res = round((float)vout*_constPerUnit - (float)vocm*_constPerUnit);
+
   if(calibrate == 0) {
     if(_usedPoints == 1) {
       res+= _const[0];
@@ -87,7 +96,7 @@ int AQUA_orp::getORP(bool calibrate) {
 bool AQUA_orp::calibration(uint8_t point, AQUA_orpCalibrationPoint *values) {
   bool res = false;
 
-  if (point < _pointCount && point >= 0 && values->refValue <= 999 && values->refValue >= -999 && values->actValue <= 999 && values->actValue >= -999) {
+  if(point < _pointCount && point >= 0 && values->refValue <= 1999 && values->refValue >= -1999 && values->actValue <= 1999 && values->actValue >= -1999) {
     if(values->state != _calData[point].state || values->refValue != _calData[point].refValue || values->actValue != _calData[point].actValue) {
       _calData[point].state = values->state;
       _calData[point].refValue = values->refValue;

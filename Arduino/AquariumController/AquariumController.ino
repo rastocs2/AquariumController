@@ -433,10 +433,10 @@ void lcdEventHandler(void) {
             phCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_SET_REF].refValue = (float)iValue/100.00;
             sprintf(row, "%2d.%02d\0", (int)phCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_SET_REF].refValue, (int)(phCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_SET_REF].refValue*100)%100);
           } else if(calibration == GENIE_CALIBRATION_ORP) {
-            if(iValue < -999) {
-              iValue = -999;
-            } else if(iValue > 999) {
-              iValue = 999;
+            if(iValue < -1999) {
+              iValue = -1999;
+            } else if(iValue > 1999) {
+              iValue = 1999;
             }
             orpCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_SET_REF].refValue = iValue;
             sprintf(row, "%+5d\0", orpCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_SET_REF].refValue);
@@ -590,9 +590,9 @@ void checkRelay(uint16_t tstamp, float temp, float pH) {
     if(objRELAY.isManual(i)) {
       relayStatus = objRELAY.getByManual(i);
     } else if(i == AQUA_TEMP_RELAY_COOLING || i == AQUA_TEMP_RELAY_HEATING) {
-      relayStatus = objRELAY.getByAlarm(i, floor(temp*100));
+      relayStatus = objRELAY.getByAlarm(i, round(temp*100));
     } else if(i == AQUA_PH_RELAY_REDUCTION || i == AQUA_PH_RELAY_INCREASE) {
-      relayStatus = objRELAY.getByAlarm(i, floor(pH*100));
+      relayStatus = objRELAY.getByAlarm(i, round(pH*100));
     } else if(i >= AQUA_RELAY_ALARMS) {
       relayStatus = objRELAY.getByTimer(i, tstamp);
     } else {
@@ -678,10 +678,10 @@ void setup() {
   objTEMP.init(AQUA_TEMP_DQ_PIN, AQUA_TEMP_CALIBRATE_POINTS, AQUA_TEMP_CALIBRATE_ADDR); //pin(DQ) - a 4.7K resistor is necessary, number of calibrating points, calibrate address
 
   if(AQUA_DEBUG_MODE_ON == 1) Serial.println("pH object initialization...");
-  objPH.init(AQUA_PH_DQ_PIN, AQUA_PH_CALIBRATE_POINTS, AQUA_PH_CALIBRATE_ADDR); //pin(DQ), number of calibrating points, calibrate address
+  objPH.init(AQUA_PH_VOUT_PIN, AQUA_PH_VOCM_PIN, AQUA_PH_CALIBRATE_POINTS, AQUA_PH_CALIBRATE_ADDR); //VOUT pin, VOCM pin, number of calibrating points, calibrate address
 
   if(AQUA_DEBUG_MODE_ON == 1) Serial.println("ORP object initialization...");
-  objORP.init(AQUA_ORP_DQ_PIN, AQUA_ORP_CALIBRATE_POINTS, AQUA_ORP_CALIBRATE_ADDR); //pin(DQ), number of calibrating points, calibrate address
+  objORP.init(AQUA_ORP_VOUT_PIN, AQUA_ORP_VOCM_PIN, AQUA_ORP_CALIBRATE_POINTS, AQUA_ORP_CALIBRATE_ADDR); //VOUT pin, VOCM pin, number of calibrating points, calibrate address
 
   if(AQUA_DEBUG_MODE_ON == 1) Serial.println("Setup LCD...");
   switch(AQUA_LCD_SERIAL) {
@@ -701,7 +701,7 @@ void setup() {
   digitalWrite(AQUA_LCD_RESET_PIN, LOW); //Reset the Display via D4
   delay(100);
   digitalWrite(AQUA_LCD_RESET_PIN, HIGH); //unReset the Display via D4
-  delay (3500); //let the display start up
+  delay(3500); //let the display start up
   genieWriteObject(GENIE_OBJ_FORM, GENIE_FORM_MAIN, 0);
   genieWriteContrast(1);
   objLCD.init(AQUA_LCD_TIMEOUT_ADDR);

@@ -5,7 +5,7 @@
   Author: Rastislav Birka
 */
 
-#define AQUA_DEBUG_MODE_ON          0 //0-live application, 1-debug mode with print to serial
+#define AQUA_DEBUG_MODE_ON          1 //0-live application, 1-debug mode with print to serial
 #define AQUA_ACTIVITY_LED          12 //pin where is led for indicate activity
 #define AQUA_WAKEUP_BUTTON          2 //pin where is button for wakeup
 
@@ -32,10 +32,14 @@
 #define AQUA_PH_CALIBRATE_POINTS    3 //number of calibrating points
 #define AQUA_PH_RELAY_REDUCTION     2 //pH reduction
 #define AQUA_PH_RELAY_INCREASE      3 //pH increase
+#define AQUA_PH_VOUT_PIN            0 //VOUT pin - Analog Output
+#define AQUA_PH_VOCM_PIN            1 //VOCM pin - Output common mode voltage
 
 #define AQUA_ORP_DQ_PIN            28 //DQ pin
 #define AQUA_ORP_CALIBRATE_ADDR  0x70 //4 bytes for each calibration point = 2 bytes for reference value and 2 bytes for measured value (3 point calibration = 12 bytes)
 #define AQUA_ORP_CALIBRATE_POINTS   3 //number of calibrating points
+#define AQUA_ORP_VOUT_PIN           2 //VOUT pin - Analog Output
+#define AQUA_ORP_VOCM_PIN           3 //VOCM pin - Output common mode voltage
 
 #define AQUA_LCD_DEFAULT_TIMEOUT   30 //timeout for display sleep mode in seconds
 #define AQUA_LCD_TIMEOUT_ADDR    0x80 //2 bytes for lcd timeout in seconds

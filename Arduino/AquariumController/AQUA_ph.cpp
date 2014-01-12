@@ -6,20 +6,24 @@
 */
 
 #include <avr/eeprom.h>
-#include "Arduino.h"
+#include <Arduino.h>
 #include "AQUA_ph.h"
 
 /*
   Public Functions
 */
 
-void AQUA_ph::init(uint8_t dqPin, uint8_t calibrate_points, uint8_t calibrate_address) {
+void AQUA_ph::init(uint8_t voutPin, uint8_t vocmPin, uint8_t calibrate_points, uint8_t calibrate_address, float vRef, float alpha) {
   uint16_t value, position;
   uint8_t i;
 
-  _dqPin = dqPin;
+  _voutPin = voutPin;
+  _vocmPin = vocmPin;
   _pointCount = calibrate_points;
   _calibrateAddress = calibrate_address;
+  _vRef = vRef;
+  _alpha = alpha;
+  _constPerUnit = _vRef*1000.00/1023.00;
   _calData = new AQUA_phCalibrationPoint[_pointCount];
   _usedData = new AQUA_phCalibrationPoint[_pointCount];
   _const = new float[(_pointCount - 1)*2];
@@ -47,14 +51,21 @@ void AQUA_ph::init(uint8_t dqPin, uint8_t calibrate_points, uint8_t calibrate_ad
     }
   }
   _setCalibrationValues();
-  pinMode(_dqPin, INPUT);
 }
 
-//dokoncit
+/*
+LMP91200
+pH = 7 + (VOUT - VOCM)/alpha
+alpha = -59.16mV/pH @ 25°C
+*/
 float AQUA_ph::getPH(bool calibrate) {
-  float res = 0;
+  int vout, vocm;
+  float res;
 
-//  res = random(1,1400)/100.00;
+  vout = analogRead(_voutPin);
+  vocm = analogRead(_vocmPin);
+  res = 7.00 + ((float)vout*_constPerUnit - (float)vocm*_constPerUnit)/(0 - _alpha);
+
   if(calibrate == 0) {
     if(_usedPoints == 1) {
       res+= _const[0];
@@ -78,7 +89,7 @@ float AQUA_ph::getPH(bool calibrate) {
 bool AQUA_ph::calibration(uint8_t point, AQUA_phCalibrationPoint *values) {
   bool res = false;
 
-  if (point < _pointCount && point >= 0 && values->refValue <= 1400 && values->refValue >= 0 && values->actValue <= 1400 && values->actValue >= 0) {
+  if(point < _pointCount && point >= 0 && values->refValue <= 1400 && values->refValue >= 0 && values->actValue <= 1400 && values->actValue >= 0) {
     if(values->state != _calData[point].state || values->refValue != _calData[point].refValue || values->actValue != _calData[point].actValue) {
       _calData[point].state = values->state;
       _calData[point].refValue = values->refValue;
