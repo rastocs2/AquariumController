@@ -59,12 +59,14 @@ pH = 7 + (VOUT - VOCM)/alpha
 alpha = -59.16mV/pH @ 25°C
 */
 float AQUA_ph::getPH(bool calibrate) {
-  int vout, vocm;
+  int total = 0;
   float res;
+  uint8_t i;
 
-  vout = analogRead(_voutPin);
-  vocm = analogRead(_vocmPin);
-  res = 7.00 + ((float)vout*_constPerUnit - (float)vocm*_constPerUnit)/(0 - _alpha);
+  for(i = 0; i < 100; i++) {
+    total+= (analogRead(_voutPin) - analogRead(_vocmPin));
+  }
+  res = 7.00 + ((float)(total/100.00)*_constPerUnit)/(0 - _alpha);
 
   if(calibrate == 0) {
     if(_usedPoints == 1) {
@@ -73,7 +75,7 @@ float AQUA_ph::getPH(bool calibrate) {
       if(res >= _usedData[_usedPoints-1].actValue) {
         res = _const[(_usedPoints-2)*2]*res + _const[(_usedPoints-2)*2 + 1];
       } else {
-        for(uint8_t i = 1; i < _usedPoints; i++) {
+        for(i = 1; i < _usedPoints; i++) {
           if(res <= _usedData[i].actValue) {
             res = _const[(i-1)*2]*res + _const[(i-1)*2 + 1];
             break;

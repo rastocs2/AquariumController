@@ -5,7 +5,7 @@
   Author: Rastislav Birka
 */
 
-#define AQUA_DEBUG_MODE_ON          1 //0-live application, 1-debug mode with print to serial
+#define AQUA_DEBUG_MODE_ON          0 //0-live application, 1-debug mode with print to serial
 #define AQUA_ACTIVITY_LED          12 //pin where is led for indicate activity
 #define AQUA_WAKEUP_BUTTON          2 //pin where is button for wakeup
 

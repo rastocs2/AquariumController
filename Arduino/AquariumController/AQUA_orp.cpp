@@ -66,12 +66,14 @@ LMP91200
 ORP = VOUT - VOCM
 */
 int AQUA_orp::getORP(bool calibrate) {
-  int vout, vocm;
+  int total = 0;
   int res;
+  uint8_t i;
 
-  vout = analogRead(_voutPin);
-  vocm = analogRead(_vocmPin);
-  res = round((float)vout*_constPerUnit - (float)vocm*_constPerUnit);
+  for(i = 0; i < 100; i++) {
+    total+= (analogRead(_voutPin) - analogRead(_vocmPin));
+  }
+  res = round((float)(total/100.00)*_constPerUnit);
 
   if(calibrate == 0) {
     if(_usedPoints == 1) {
@@ -80,7 +82,7 @@ int AQUA_orp::getORP(bool calibrate) {
       if(res >= _usedData[_usedPoints-1].actValue) {
         res = _const[(_usedPoints-2)*2]*res + _const[(_usedPoints-2)*2 + 1];
       } else {
-        for(uint8_t i = 1; i < _usedPoints; i++) {
+        for(i = 1; i < _usedPoints; i++) {
           if(res <= _usedData[i].actValue) {
             res = _const[(i-1)*2]*res + _const[(i-1)*2 + 1];
             break;

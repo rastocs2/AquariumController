@@ -159,9 +159,9 @@ void lcdEventHandler(void) {
           sprintf(row, "%4d\0", settingsTimeout);
           genieWriteStr(GENIE_STR_SLEEP_TIMEOUT, row);
         } else if(Event.reportObject.index >= GENIE_BTN_CALIBRATION_TEMP && Event.reportObject.index <= GENIE_BTN_CALIBRATION_ORP) { //Calibration
-          if((Event.reportObject.index == GENIE_BTN_CALIBRATION_TEMP && objTEMP.getTemp() > 0)
+          /*if((Event.reportObject.index == GENIE_BTN_CALIBRATION_TEMP && objTEMP.getTemp() > 0)
               || (Event.reportObject.index == GENIE_BTN_CALIBRATION_PH && objPH.getPH() > 0)
-              || (Event.reportObject.index == GENIE_BTN_CALIBRATION_ORP && objORP.getORP() != 0)) {
+              || (Event.reportObject.index == GENIE_BTN_CALIBRATION_ORP && objORP.getORP() != 0))*/ {
             objLCD.setActualForm(GENIE_FORM_CALIBRATION);
             keyboardStart = true;
             keyboardString = "0";
@@ -450,28 +450,28 @@ void lcdEventHandler(void) {
           }
         } else if(Event.reportObject.index >= GENIE_BTN_CAL1_READ_ACT && Event.reportObject.index <= GENIE_BTN_CAL3_READ_ACT) { //Calibration - "Read" buttons
           if(calibration == GENIE_CALIBRATION_TEMP) {
-            float temp = 0;
-            for(uint8_t i = 0; i < 4; i++) {
-              temp+= objTEMP.getTemp(1);
+            float temp = objTEMP.getTemp(1);
+            for(uint8_t i = 1; i < 4; i++) {
               delay(1);
+              temp+= objTEMP.getTemp(1);
             }
             tempCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue = temp/4.00;
             sprintf(row, "%2d.%02d\0", (int)tempCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue, (int)(tempCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue*100)%100);
           } else if(calibration == GENIE_CALIBRATION_PH) {
-            float pH = 0;
-            for(uint8_t i = 0; i < 4; i++) {
-              pH+= objPH.getPH(1);
+            float pH = objPH.getPH(1);
+            for(uint8_t i = 1; i < 10; i++) {
               delay(1);
+              pH+= objPH.getPH(1);
             }
-            phCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue = pH/4.00;
+            phCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue = pH/10.00;
             sprintf(row, "%2d.%02d\0", (int)phCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue, (int)(phCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue*100)%100);
           } else if(calibration == GENIE_CALIBRATION_ORP) {
-            int orp = 0;
-            for(uint8_t i = 0; i < 4; i++) {
-              orp+= objORP.getORP(1);
+            int orp = objORP.getORP(1);
+            for(uint8_t i = 1; i < 10; i++) {
               delay(1);
+              orp+= objORP.getORP(1);
             }
-            orpCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue = (int)(orp/4);
+            orpCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue = (int)(orp/10);
             sprintf(row, "%+5d\0", orpCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_READ_ACT].actValue);
           }
           if(Event.reportObject.index == GENIE_BTN_CAL1_READ_ACT) {
@@ -664,7 +664,7 @@ void printStatusToSerial(AQUA_datetime *datetimeStruct, float temp, float pH, in
 /*** setup function ***/
 void setup() {
   if(AQUA_DEBUG_MODE_ON == 1) {
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.println("Initialization...");
   }
 
@@ -723,7 +723,7 @@ void setup() {
 void loop() {
   genieDoEvents();
   if(wakeupLCD == 1 && calibration > GENIE_CALIBRATION_OFF) {
-    if(calWV < millis() - 250) {
+    if(calWV < millis() - 500) {
       writeActualValue();
       calWV = millis();
     }
