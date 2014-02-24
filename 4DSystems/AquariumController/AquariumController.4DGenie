@@ -4672,3 +4672,85 @@ Strings
     Width                        44
     OnChanged                    ''
 end
+Form
+    Name                         Form6
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+StaticText
+    Name                         Statictext5
+    AutoSize                     Yes
+    Caption                      'Calibration process'
+    Color                        BLACK
+    Font.Color                   AQUA
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    12
+    Font.Style                   [Bold]
+    Height                       20
+    Left                         80
+    Top                          72
+    Transparent                  Yes
+    Visible                      Yes
+    Width                        160
+    WordWrap                     Yes
+end
+Gauge
+    Name                         Gauge0
+    Analogue                     (None)
+    Bevel.BorderColor            clBtnFace
+    Bevel.BorderWidth            0
+    Bevel.InnerColor             BLACK
+    Bevel.InnerHighlight         clBtnHighlight
+    Bevel.InnerOutline           None
+    Bevel.InnerShadow            clBtnShadow
+    Bevel.InnerSpace             1
+    Bevel.InnerStyle             Lowered
+    Bevel.Innerwidth             2
+    Bevel.OuterColor             clBtnFace
+    Bevel.OuterHighlight         clBtnHighlight
+    Bevel.OuterOutline           Outer
+    Bevel.OuterShadow            clBtnShadow
+    Bevel.OuterSpace             0
+    Bevel.OuterStyle             Raised
+    Bevel.Outerwidth             1
+    Bevel.Visible                Yes
+    Color                        BLACK
+    Height                       80
+    Interval                     100
+    Left                         12
+    Maxvalue                     100
+    Minvalue                     0
+    Orientation                  Horizontal
+    Palette1.High                SEAGREEN
+    Palette1.Low                 BLACK
+    Palette2.High                SEAGREEN
+    Palette2.Low                 BLACK
+    Palette3.High                SEAGREEN
+    Palette3.Low                 BLACK
+    Percent1                     100
+    Percent2                     0
+    Spacing                      1
+    Step                         1
+    Style                        BottomLeft
+    TickHeight                   1
+    Timer                        (None)
+    Top                          100
+    Visible                      Yes
+    Width                        296
+    OnChanged                    ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end

@@ -14,6 +14,7 @@
 #define GENIE_FORM_SET_ALARM        3
 #define GENIE_FORM_SET_TIMER        4
 #define GENIE_FORM_CALIBRATION      5
+#define GENIE_FORM_CALIBRATION_SHOW 6
 
 #define GENIE_BTN_WAKEUP            0
 #define GENIE_BTN_SLEEP             0
@@ -102,6 +103,8 @@
 #define GENIE_KEYBOARD_TIMER        2
 #define GENIE_KEYBOARD_CALIBRATION  3
 #define GENIE_KEYBOARD_CLEAR_KEY   99
+
+#define GENIE_GAUGE_CALIBRATION     0
 
 #define GENIE_STR_TIME              0
 #define GENIE_STR_TEMP              1

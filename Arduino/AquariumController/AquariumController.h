@@ -43,6 +43,6 @@
 
 #define AQUA_LCD_DEFAULT_TIMEOUT   30 //timeout for display sleep mode in seconds
 #define AQUA_LCD_TIMEOUT_ADDR    0x80 //2 bytes for lcd timeout in seconds
-#define AQUA_LCD_SERIAL             3 //which serial port is used for LCD //3 = pin 15(RX) and pin 14(TX)
-#define AQUA_LCD_SERIAL_SPEED  115200 //spped for serial communication
+#define AQUA_LCD_SERIAL             2 //which serial port is used for LCD //1 = pin 19(RX) and pin 18(TX), 2 = pin 17(RX) and pin 16(TX), 3 = pin 15(RX) and pin 14(TX)
+#define AQUA_LCD_SERIAL_SPEED  115200 //speed for serial communication
 #define AQUA_LCD_RESET_PIN          4 //pin for reset
