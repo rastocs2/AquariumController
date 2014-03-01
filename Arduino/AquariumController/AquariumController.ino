@@ -251,6 +251,7 @@ void displayForm(uint8_t form, uint8_t index = 0, bool actualValues = false) {
       break;
     case GENIE_FORM_MAIN:
     default:
+      calibration = GENIE_CALIBRATION_OFF;
       break;
   }
 }
@@ -753,7 +754,7 @@ void setup() {
   digitalWrite(AQUA_LCD_RESET_PIN, LOW); //Reset the Display via D4
   delay(100);
   digitalWrite(AQUA_LCD_RESET_PIN, HIGH); //unReset the Display via D4
-  delay(3500); //let the display start up
+  delay(4000); //let the display start up
   displayForm(GENIE_FORM_MAIN);
   genieWriteContrast(1);
   objLCD.init(AQUA_LCD_TIMEOUT_ADDR);

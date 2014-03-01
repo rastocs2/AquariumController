@@ -18,8 +18,8 @@
 
 #define AQUA_TIME_DATA_PIN         22 //SDA pin
 #define AQUA_TIME_CLOCK_PIN        23 //SCLK pin
-#define AQUA_TIME_DS_PIN           24 //DS pin
-#define AQUA_TIME_SQ_PIN           25 //SQ pin
+#define AQUA_TIME_SQ_PIN           24 //SQ pin
+#define AQUA_TIME_DS_PIN           25 //DS pin
 
 #define AQUA_TEMP_DQ_PIN           26 //DQ pin
 #define AQUA_TEMP_CALIBRATE_ADDR 0x50 //4 bytes for each calibration point = 2 bytes for reference value and 2 bytes for measured value (3 point calibration = 12 bytes)
