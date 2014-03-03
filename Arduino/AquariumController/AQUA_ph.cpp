@@ -13,7 +13,7 @@
   Public Functions
 */
 
-void AQUA_ph::init(uint8_t voutPin, uint8_t vocmPin, uint8_t calibrate_points, uint8_t calibrate_address, float vRef, float alpha) {
+void AQUA_ph::init(uint8_t voutPin, uint8_t vocmPin, uint8_t calibrate_points, uint8_t calibrate_address, int vRef, uint8_t adc_bit, float alpha) {
   uint16_t value, position;
   uint8_t i;
 
@@ -21,9 +21,8 @@ void AQUA_ph::init(uint8_t voutPin, uint8_t vocmPin, uint8_t calibrate_points, u
   _vocmPin = vocmPin;
   _pointCount = calibrate_points;
   _calibrateAddress = calibrate_address;
-  _vRef = vRef;
   _alpha = alpha;
-  _constPerUnit = _vRef*1000.00/1023.00;
+  _constPerUnit = (float)vRef/(pow(2,adc_bit)-1.0);
   _calData = new AQUA_phCalibrationPoint[_pointCount];
   _usedData = new AQUA_phCalibrationPoint[_pointCount];
   _const = new float[(_pointCount - 1)*2];
@@ -59,14 +58,27 @@ pH = 7 + (VOUT - VOCM)/alpha
 alpha = -59.16mV/pH @ 25°C
 */
 float AQUA_ph::getPH(bool calibrate) {
-  int total = 0;
+  int tmp, total = 0;
+  int values[120];
   float res;
-  uint8_t i;
+  uint8_t i, j;
 
-  for(i = 0; i < 100; i++) {
-    total+= (analogRead(_voutPin) - analogRead(_vocmPin));
+  for(i = 0; i < 120; i++) {
+    values[i] = analogRead(_voutPin) - analogRead(_vocmPin);
   }
-  res = 7.00 + ((float)(total/100.00)*_constPerUnit)/(0 - _alpha);
+  for(i = 0; i < 119; i++) {
+    for(j = i+1; j < 120; j++) {
+      if(values[i] > values[j]) {
+        tmp = values[i];
+        values[i] = values[j];
+        values[j] = tmp;
+      }
+    }
+  }
+  for(i = 10; i < 110; i++) {
+    total+= values[i];
+  }
+  res = 7.00 + ((float)(total/100.0)*_constPerUnit)/(0.0 - _alpha);
 
   if(calibrate == 0) {
     if(_usedPoints == 1) {

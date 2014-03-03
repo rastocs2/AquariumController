@@ -704,6 +704,8 @@ void printStatusToSerial(AQUA_datetime *datetimeStruct, float temp, float pH, in
 
 /*** setup function ***/
 void setup() {
+  analogReference(EXTERNAL); //use AREF for reference voltage (connect 3.3V pin to AREF pin)
+
   if(AQUA_DEBUG_MODE_ON == 1) {
     Serial.begin(115200);
     Serial.println("Initialization...");
@@ -727,12 +729,12 @@ void setup() {
   if(AQUA_DEBUG_MODE_ON == 1) {
     Serial.println("pH object initialization...");
   }
-  objPH.init(AQUA_PH_VOUT_PIN, AQUA_PH_VOCM_PIN, AQUA_PH_CALIBRATE_POINTS, AQUA_PH_CALIBRATE_ADDR); //VOUT pin, VOCM pin, number of calibrating points, calibrate address
+  objPH.init(AQUA_PH_VOUT_PIN, AQUA_PH_VOCM_PIN, AQUA_PH_CALIBRATE_POINTS, AQUA_PH_CALIBRATE_ADDR, AQUA_ANALOG_VREF, AQUA_ADC_BIT_RESOLUTION); //VOUT pin, VOCM pin, number of calibrating points, calibrate address, vRef, ADC bit resolution
 
   if(AQUA_DEBUG_MODE_ON == 1) {
     Serial.println("ORP object initialization...");
   }
-  objORP.init(AQUA_ORP_VOUT_PIN, AQUA_ORP_VOCM_PIN, AQUA_ORP_CALIBRATE_POINTS, AQUA_ORP_CALIBRATE_ADDR); //VOUT pin, VOCM pin, number of calibrating points, calibrate address
+  objORP.init(AQUA_ORP_VOUT_PIN, AQUA_ORP_VOCM_PIN, AQUA_ORP_CALIBRATE_POINTS, AQUA_ORP_CALIBRATE_ADDR, AQUA_ANALOG_VREF, AQUA_ADC_BIT_RESOLUTION); //VOUT pin, VOCM pin, number of calibrating points, calibrate address, vRef, ADC bit resolution
 
   if(AQUA_DEBUG_MODE_ON == 1) {
     Serial.print("Setup LCD:");Serial.print(AQUA_LCD_SERIAL);Serial.print(":");Serial.println(AQUA_LCD_SERIAL_SPEED);

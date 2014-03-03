@@ -8,6 +8,8 @@
 #define AQUA_DEBUG_MODE_ON          0 //0-live application, 1-debug mode with print to serial
 #define AQUA_ACTIVITY_LED          12 //pin where is led for indicate activity
 #define AQUA_WAKEUP_BUTTON          2 //pin where is button for wakeup
+#define AQUA_ANALOG_VREF         3300 //reference voltage for analog (mV)
+#define AQUA_ADC_BIT_RESOLUTION    10 //ADC bit resolution (10 for arduino internal ADC)
 
 #define AQUA_RELAY_FIRST_PIN       30 //for 8 relay module will use next 7 pins (30,...,37)
 #define AQUA_RELAY_ALARMS           4 //number of alarms (temperature high, temperature low, pH high, pH low)
