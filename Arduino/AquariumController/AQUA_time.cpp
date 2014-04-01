@@ -9,6 +9,8 @@
 #include <Arduino.h>
 #include "AQUA_time.h"
 
+uint8_t AQUA_time::_daysInMonths[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+
 /*
   Public Functions
 */
@@ -186,6 +188,14 @@ AQUA_datetime AQUA_time::getDateTime() {
         }
       } else if((31 - datetimeStruct.day + datetimeStruct.wday) >= 7) {
         datetimeStruct.hour++;
+      }
+    }
+    if (datetimeStruct.mon >= 3 && datetimeStruct.mon <= 10 && datetimeStruct.hour >= 24) {
+      datetimeStruct.hour-= 24;
+      datetimeStruct.day++;
+      if (datetimeStruct.day > AQUA_time::_daysInMonths[datetimeStruct.mon-1]) {
+        datetimeStruct.day = 1;
+        datetimeStruct.mon++;
       }
     }
   }

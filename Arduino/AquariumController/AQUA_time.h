@@ -64,8 +64,9 @@ class AQUA_time {
   private:
     uint8_t _dataPin, _clockPin, _dsType;
     uint8_t _regDateTime[8];
-    bool _useDST; //whether will used DTS or no
-    uint8_t _timeZone; //it is used only for calculating DTS and only for time zone >= 0
+    bool _useDST; //whether will used DST or no
+    uint8_t _timeZone; //it is used only for calculating DST and only for time zone >= 0
+    static uint8_t _daysInMonths[12]; //days in months (for calculating DST)
 
     void _sendStart(uint8_t addr);
     void _sendStop();
