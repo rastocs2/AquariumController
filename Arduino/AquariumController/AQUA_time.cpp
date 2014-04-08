@@ -9,8 +9,6 @@
 #include <Arduino.h>
 #include "AQUA_time.h"
 
-uint8_t AQUA_time::_daysInMonths[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
-
 /*
   Public Functions
 */
@@ -124,25 +122,22 @@ void AQUA_time::stop() {
 }
 
 void AQUA_time::setDate(uint8_t day, uint8_t mon, uint16_t year) {
-  if(day > 0 && day < 32 && mon > 0 && mon < 13 && year > 1999 && year < 3000) {
-    year -= 2000;
-    _writeRegister(TIME_ADDR_YEAR, _encode(year));
+  if(day > 0 && day < 32 && mon > 0 && mon < 13 && year > 1999 && year < 2100) {
+    _writeRegister(TIME_ADDR_YEAR, _encode(year-2000));
     _writeRegister(TIME_ADDR_MON, _encode(mon));
     _writeRegister(TIME_ADDR_DAY, _encode(day));
+    _writeRegister(TIME_ADDR_WDAY, _calculateWday(day, mon, year));
   }
 }
 
 void AQUA_time::setTime(uint8_t hour, uint8_t min, uint8_t sec) {
   if(hour >= 0 && hour < 24 && min >= 0 && min < 60 && sec >= 0 && sec < 60) {
+    if (_isDST && hour > 0) {
+      hour--;
+    }
     _writeRegister(TIME_ADDR_HOUR, _encode(hour));
     _writeRegister(TIME_ADDR_MIN, _encode(min));
     _writeRegister(TIME_ADDR_SEC, _encode(sec));
-  }
-}
-
-void AQUA_time::setWday(uint8_t wday) {
-  if(wday > 0 && wday < 8) {
-    _writeRegister(TIME_ADDR_WDAY, wday);
   }
 }
 
@@ -156,6 +151,7 @@ void AQUA_time::setTimeZone(int timeZone) {
 
 AQUA_datetime AQUA_time::getDateTime() {
   AQUA_datetime datetimeStruct;
+  static uint8_t daysInMonths[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
 
   _readDateTime();
   datetimeStruct.sec  = _decode(_regDateTime[0]);
@@ -166,34 +162,38 @@ AQUA_datetime AQUA_time::getDateTime() {
   datetimeStruct.mon  = _decode(_regDateTime[5]);
   datetimeStruct.year = _decode(_regDateTime[6]) + 2000;
 
+  _isDST = false;
   if(_useDST) {
     //DST start in last sunday in march about 01:00 GMT and end in last sunday in october about 01:00 GMT
     //sunday = 7th day in week according to ISO 8601
     if(datetimeStruct.mon > 3 && datetimeStruct.mon < 10) {
-      datetimeStruct.hour++;
+      _isDST = true;
     } else if(datetimeStruct.mon == 3 && datetimeStruct.day > 24) {
       if(datetimeStruct.wday == 7) {
         if((datetimeStruct.hour - _timeZone) > 0) {
-          datetimeStruct.hour++;
+          _isDST = true;
         }
       } else if((31 - datetimeStruct.day + datetimeStruct.wday) <= 7) {
-        datetimeStruct.hour++;
+        _isDST = true;
       }
     } else if(datetimeStruct.mon == 10 && datetimeStruct.day < 25) {
-      datetimeStruct.hour++;
+      _isDST = true;
     } else if(datetimeStruct.mon == 10) {
       if(datetimeStruct.wday == 7) {
         if((datetimeStruct.hour - _timeZone) < 1) {
-          datetimeStruct.hour++;
+          _isDST = true;
         }
       } else if((31 - datetimeStruct.day + datetimeStruct.wday) >= 7) {
-        datetimeStruct.hour++;
+        _isDST = true;
       }
+    }
+    if (_isDST) {
+      datetimeStruct.hour++;
     }
     if (datetimeStruct.mon >= 3 && datetimeStruct.mon <= 10 && datetimeStruct.hour >= 24) {
       datetimeStruct.hour-= 24;
       datetimeStruct.day++;
-      if (datetimeStruct.day > AQUA_time::_daysInMonths[datetimeStruct.mon-1]) {
+      if (datetimeStruct.day > daysInMonths[datetimeStruct.mon-1]) {
         datetimeStruct.day = 1;
         datetimeStruct.mon++;
       }
@@ -206,6 +206,20 @@ AQUA_datetime AQUA_time::getDateTime() {
 /*
   Private Functions
 */
+
+uint8_t AQUA_time::_calculateWday(uint8_t day, uint8_t mon, uint16_t year) {
+  static uint8_t monValues[12] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+  uint8_t wDay = 0;
+
+  if (mon < 3) {
+    year--;
+  }
+  wDay = (year + year/4 - year/100 + year/400 + monValues[mon-1] + day) % 7;
+  if (wDay == 0) { //Sunday = 0, Monday = 1, ...
+    wDay = 7; //sunday = 7th day in week according to ISO 8601
+  }
+  return wDay;
+}
 
 void AQUA_time::_sendStart(uint8_t addr) {
   pinMode(_dataPin, OUTPUT);

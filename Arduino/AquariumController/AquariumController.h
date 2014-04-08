@@ -14,7 +14,7 @@
 #define AQUA_RELAY_FIRST_PIN       30 //for 8 relay module will use next 7 pins (30,...,37)
 #define AQUA_RELAY_ALARMS           4 //number of alarms (temperature high, temperature low, pH high, pH low)
 #define AQUA_RELAY_TIMERS           4 //number of timers (day light, night light, ...)
-#define AQUA_RELAY_TIMER_PARTS      4 //number of timers (day light, night light, ...)
+#define AQUA_RELAY_TIMER_PARTS      4 //number of timer parts (day light, night light, ...)
 #define AQUA_RELAY_ALARMS_ADDR   0x00 //4 bytes for each alarm = 2 bytes for start value and 2 bytes for stop value (4 alarms = 16 bytes)
 #define AQUA_RELAY_TIMERS_ADDR   0x10 //4 bytes for each timer part = 2 bytes for start timestamp and 2 bytes for end timestamp (4 timer parts for each timer = 16 timer parts = 64 bytes)
 
@@ -40,8 +40,8 @@
 #define AQUA_ORP_DQ_PIN            28 //DQ pin
 #define AQUA_ORP_CALIBRATE_ADDR  0x70 //4 bytes for each calibration point = 2 bytes for reference value and 2 bytes for measured value (3 point calibration = 12 bytes)
 #define AQUA_ORP_CALIBRATE_POINTS   3 //number of calibrating points
-#define AQUA_ORP_VOUT_PIN           2 //VOUT pin - Analog Output
-#define AQUA_ORP_VOCM_PIN           3 //VOCM pin - Output common mode voltage
+#define AQUA_ORP_VOUT_PIN           4 //VOUT pin - Analog Output
+#define AQUA_ORP_VOCM_PIN           5 //VOCM pin - Output common mode voltage
 
 #define AQUA_LCD_DEFAULT_TIMEOUT   30 //timeout for display sleep mode in seconds
 #define AQUA_LCD_TIMEOUT_ADDR    0x80 //2 bytes for lcd timeout in seconds

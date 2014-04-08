@@ -56,7 +56,6 @@ class AQUA_time {
 
     void setDate(uint8_t day, uint8_t mon, uint16_t year);
     void setTime(uint8_t hour, uint8_t min, uint8_t sec);
-    void setWday(uint8_t wday);
     void setDST(bool useDST);
     void setTimeZone(int timeZone);
     AQUA_datetime getDateTime();
@@ -66,8 +65,9 @@ class AQUA_time {
     uint8_t _regDateTime[8];
     bool _useDST; //whether will used DST or no
     uint8_t _timeZone; //it is used only for calculating DST and only for time zone >= 0
-    static uint8_t _daysInMonths[12]; //days in months (for calculating DST)
+    bool _isDST; //actually is DST or no
 
+    uint8_t _calculateWday(uint8_t day, uint8_t mon, uint16_t year);
     void _sendStart(uint8_t addr);
     void _sendStop();
     void _sendAck();

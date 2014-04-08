@@ -23,6 +23,7 @@ AQUA_orp    objORP;
 AQUA_time   objTIME;
 AQUA_relay  objRELAY;
 AQUA_lcd    objLCD;
+Genie       objGenie;
 
 static uint8_t relayCount = AQUA_RELAY_ALARMS + AQUA_RELAY_TIMERS;
 bool wakeup, wakeupButton, wakeupLCD;
@@ -92,16 +93,16 @@ void displayForm(uint8_t form, uint8_t index = 0, bool actualValues = false) {
     Serial.print("displayForm: ");Serial.println(form);
   }
   objLCD.setActualForm(form);
-  genieWriteObject(GENIE_OBJ_FORM, form, 0);
+  objGenie.WriteObject(GENIE_OBJ_FORM, form, 0);
   switch(form) {
     case GENIE_FORM_CALIBRATION:
       keyboardStart = true;
       keyboardString = "0";
       calibration = index - GENIE_CALIBRATION_TEMP;
-      genieWriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_CALIBRATION, 0);
-      genieWriteObject(GENIE_OBJ_STRINGS, GENIE_STR_CAL_INFO, index - GENIE_BTN_CALIBRATION_TEMP);
+      objGenie.WriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_CALIBRATION, 0);
+      objGenie.WriteObject(GENIE_OBJ_STRINGS, GENIE_STR_CAL_INFO, index - GENIE_BTN_CALIBRATION_TEMP);
       sprintf(row, "%5d\0", 0);
-      genieWriteStr(GENIE_STR_CAL_KEY, row);
+      objGenie.WriteStr(GENIE_STR_CAL_KEY, row);
       if(calibration == GENIE_CALIBRATION_TEMP) {
         for(uint8_t i = 0; i < AQUA_TEMP_CALIBRATE_POINTS; i++) {
           tempCalPointOld = objTEMP.readCalibrationPoint(i);
@@ -110,15 +111,15 @@ void displayForm(uint8_t form, uint8_t index = 0, bool actualValues = false) {
             tempCalPoint[i].refValue = tempCalPointOld.refValue;
             tempCalPoint[i].actValue = 0;
           }
-          genieWriteObject(GENIE_OBJ_4DBUTTON, i + GENIE_BTN_CAL1_STATE, tempCalPoint[i].state);
+          objGenie.WriteObject(GENIE_OBJ_4DBUTTON, i + GENIE_BTN_CAL1_STATE, tempCalPoint[i].state);
           sprintf(row, "%2d.%02d\0", (int)tempCalPointOld.refValue, (int)(tempCalPointOld.refValue*100)%100);
-          genieWriteStr(i + GENIE_STR_CAl1_REF_OLD, row);
+          objGenie.WriteStr(i + GENIE_STR_CAl1_REF_OLD, row);
           sprintf(row, "%2d.%02d\0", (int)tempCalPointOld.actValue, (int)(tempCalPointOld.actValue*100)%100);
-          genieWriteStr(i + GENIE_STR_CAl1_ACT_OLD, row);
+          objGenie.WriteStr(i + GENIE_STR_CAl1_ACT_OLD, row);
           sprintf(row, "%2d.%02d\0", (int)tempCalPoint[i].refValue, (int)(tempCalPoint[i].refValue*100)%100);
-          genieWriteStr(i + GENIE_STR_CAl1_REF_NEW, row);
+          objGenie.WriteStr(i + GENIE_STR_CAl1_REF_NEW, row);
           sprintf(row, "%2d.%02d\0", (int)tempCalPoint[i].actValue, (int)(tempCalPoint[i].actValue*100)%100);
-          genieWriteStr(i + GENIE_STR_CAl1_ACT_NEW, row);
+          objGenie.WriteStr(i + GENIE_STR_CAl1_ACT_NEW, row);
         }
       } else if(calibration == GENIE_CALIBRATION_PH) {
         for(uint8_t i = 0; i < AQUA_PH_CALIBRATE_POINTS; i++) {
@@ -128,15 +129,15 @@ void displayForm(uint8_t form, uint8_t index = 0, bool actualValues = false) {
             phCalPoint[i].refValue = phCalPointOld.refValue;
             phCalPoint[i].actValue = 0;
           }
-          genieWriteObject(GENIE_OBJ_4DBUTTON, i + GENIE_BTN_CAL1_STATE, phCalPoint[i].state);
+          objGenie.WriteObject(GENIE_OBJ_4DBUTTON, i + GENIE_BTN_CAL1_STATE, phCalPoint[i].state);
           sprintf(row, "%2d.%02d\0", (int)phCalPointOld.refValue, (int)(phCalPointOld.refValue*100)%100);
-          genieWriteStr(i + GENIE_STR_CAl1_REF_OLD, row);
+          objGenie.WriteStr(i + GENIE_STR_CAl1_REF_OLD, row);
           sprintf(row, "%2d.%02d\0", (int)phCalPointOld.actValue, (int)(phCalPointOld.actValue*100)%100);
-          genieWriteStr(i + GENIE_STR_CAl1_ACT_OLD, row);
+          objGenie.WriteStr(i + GENIE_STR_CAl1_ACT_OLD, row);
           sprintf(row, "%2d.%02d\0", (int)phCalPoint[i].refValue, (int)(phCalPoint[i].refValue*100)%100);
-          genieWriteStr(i + GENIE_STR_CAl1_REF_NEW, row);
+          objGenie.WriteStr(i + GENIE_STR_CAl1_REF_NEW, row);
           sprintf(row, "%2d.%02d\0", (int)phCalPoint[i].actValue, (int)(phCalPoint[i].actValue*100)%100);
-          genieWriteStr(i + GENIE_STR_CAl1_ACT_NEW, row);
+          objGenie.WriteStr(i + GENIE_STR_CAl1_ACT_NEW, row);
         }
       } else if(calibration == GENIE_CALIBRATION_ORP) {
         for(uint8_t i = 0; i < AQUA_ORP_CALIBRATE_POINTS; i++) {
@@ -146,46 +147,46 @@ void displayForm(uint8_t form, uint8_t index = 0, bool actualValues = false) {
             orpCalPoint[i].refValue = orpCalPointOld.refValue;
             orpCalPoint[i].actValue = 0;
           }
-          genieWriteObject(GENIE_OBJ_4DBUTTON, i + GENIE_BTN_CAL1_STATE, orpCalPoint[i].state);
+          objGenie.WriteObject(GENIE_OBJ_4DBUTTON, i + GENIE_BTN_CAL1_STATE, orpCalPoint[i].state);
           sprintf(row, "%+5d\0", (int)orpCalPointOld.refValue);
-          genieWriteStr(i + GENIE_STR_CAl1_REF_OLD, row);
+          objGenie.WriteStr(i + GENIE_STR_CAl1_REF_OLD, row);
           sprintf(row, "%+5d\0", (int)orpCalPointOld.actValue);
-          genieWriteStr(i + GENIE_STR_CAl1_ACT_OLD, row);
+          objGenie.WriteStr(i + GENIE_STR_CAl1_ACT_OLD, row);
           sprintf(row, "%+5d\0", (int)orpCalPoint[i].refValue);
-          genieWriteStr(i + GENIE_STR_CAl1_REF_NEW, row);
+          objGenie.WriteStr(i + GENIE_STR_CAl1_REF_NEW, row);
           sprintf(row, "%+5d\0", (int)orpCalPoint[i].actValue);
-          genieWriteStr(i + GENIE_STR_CAl1_ACT_NEW, row);
+          objGenie.WriteStr(i + GENIE_STR_CAl1_ACT_NEW, row);
         }
       }
       break;
     case GENIE_FORM_CALIBRATION_SHOW:
       calibration = GENIE_CALIBRATION_OFF;
-      genieWriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, 0);
+      objGenie.WriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, 0);
       if(actualCalibration == GENIE_CALIBRATION_TEMP) {
         float temp = objTEMP.getTemp(1);
         for(uint8_t i = 1; i < 10; i++) {
-          genieWriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, i*10);
+          objGenie.WriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, i*10);
           temp+= objTEMP.getTemp(1);
         }
-        genieWriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, 100);
+        objGenie.WriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, 100);
         tempCalPoint[index - GENIE_BTN_CAL1_READ_ACT].actValue = temp/10.00;
         displayForm(GENIE_FORM_CALIBRATION, GENIE_BTN_CALIBRATION_TEMP, true);
       } else if(actualCalibration == GENIE_CALIBRATION_PH) {
         float pH = objPH.getPH(1);
         for(uint8_t i = 1; i < 100; i++) {
-          genieWriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, i);
+          objGenie.WriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, i);
           pH+= objPH.getPH(1);
         }
-        genieWriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, 100);
+        objGenie.WriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, 100);
         phCalPoint[index - GENIE_BTN_CAL1_READ_ACT].actValue = pH/100.00;
         displayForm(GENIE_FORM_CALIBRATION, GENIE_BTN_CALIBRATION_PH, true);
       } else if(actualCalibration == GENIE_CALIBRATION_ORP) {
         int orp = objORP.getORP(1);
         for(uint8_t i = 1; i < 100; i++) {
-          genieWriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, i);
+          objGenie.WriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, i);
           orp+= objORP.getORP(1);
         }
-        genieWriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, 100);
+        objGenie.WriteObject(GENIE_OBJ_GAUGE, GENIE_GAUGE_CALIBRATION, 100);
         orpCalPoint[index - GENIE_BTN_CAL1_READ_ACT].actValue = (int)(orp/100);
         displayForm(GENIE_FORM_CALIBRATION, GENIE_BTN_CALIBRATION_ORP, true);
       }
@@ -194,17 +195,17 @@ void displayForm(uint8_t form, uint8_t index = 0, bool actualValues = false) {
       keyboardStart = true;
       keyboardString = "0";
       settingsRelay = index - GENIE_BTN_SET_R1;
-      genieWriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_TIMER, 0);
-      genieWriteObject(GENIE_OBJ_STRINGS, GENIE_STR_TIMER_INFO, settingsRelay - AQUA_RELAY_TIMERS);
+      objGenie.WriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_TIMER, 0);
+      objGenie.WriteObject(GENIE_OBJ_STRINGS, GENIE_STR_TIMER_INFO, settingsRelay - AQUA_RELAY_TIMERS);
       sprintf(row, "%5d\0", 0);
-      genieWriteStr(GENIE_STR_TIMER_KEY, row);
+      objGenie.WriteStr(GENIE_STR_TIMER_KEY, row);
       for(uint8_t i = 0; i < AQUA_RELAY_TIMER_PARTS; i++) {
         settingsTimer[i] = objRELAY.readRelayTimerPart(settingsRelay, i);
         sprintf(row, "%2d:%02d\0", (int)(settingsTimer[i].from/60), settingsTimer[i].from%60);
-        genieWriteStr(i*2 + GENIE_STR_TIMER1_START, row);
+        objGenie.WriteStr(i*2 + GENIE_STR_TIMER1_START, row);
         sprintf(row, "%2d:%02d\0", (int)(settingsTimer[i].to/60), settingsTimer[i].to%60);
-        genieWriteStr(i*2 + GENIE_STR_TIMER1_STOP, row);
-        genieWriteObject(GENIE_OBJ_4DBUTTON, i + GENIE_BTN_TIMER1_STATE, settingsTimer[i].state);
+        objGenie.WriteStr(i*2 + GENIE_STR_TIMER1_STOP, row);
+        objGenie.WriteObject(GENIE_OBJ_4DBUTTON, i + GENIE_BTN_TIMER1_STATE, settingsTimer[i].state);
       }
       break;
     case GENIE_FORM_SET_ALARM:
@@ -212,41 +213,39 @@ void displayForm(uint8_t form, uint8_t index = 0, bool actualValues = false) {
       keyboardString = "0";
       settingsRelay = index - GENIE_BTN_SET_R1;
       settingsAlarm = objRELAY.readRelayAlarm(settingsRelay);
-      genieWriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_ALARM, 0);
-      genieWriteObject(GENIE_OBJ_STRINGS, GENIE_STR_ALARM_INFO, settingsRelay);
-      genieWriteObject(GENIE_OBJ_4DBUTTON, GENIE_BTN_ALARM_STATE, settingsAlarm.state);
+      objGenie.WriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_ALARM, 0);
+      objGenie.WriteObject(GENIE_OBJ_STRINGS, GENIE_STR_ALARM_INFO, settingsRelay);
+      objGenie.WriteObject(GENIE_OBJ_4DBUTTON, GENIE_BTN_ALARM_STATE, settingsAlarm.state);
       sprintf(row, "%5d\0", 0);
-      genieWriteStr(GENIE_STR_ALARM_KEY, row);
+      objGenie.WriteStr(GENIE_STR_ALARM_KEY, row);
       sprintf(row, "%2d.%02d\0", (int)(settingsAlarm.start/100), settingsAlarm.start%100);
-      genieWriteStr(GENIE_STR_ALARM_START, row);
+      objGenie.WriteStr(GENIE_STR_ALARM_START, row);
       sprintf(row, "%2d.%02d\0", (int)(settingsAlarm.stop/100), settingsAlarm.stop%100);
-      genieWriteStr(GENIE_STR_ALARM_STOP, row);
+      objGenie.WriteStr(GENIE_STR_ALARM_STOP, row);
       break;
     case GENIE_FORM_SET_TIME:
       keyboardStart = true;
       keyboardString = "0";
       settingsDatetime = objTIME.getDateTime();
       settingsTimeout = objLCD.getTimeout();
-      genieWriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_TIME, 0);
+      objGenie.WriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_TIME, 0);
       sprintf(row, "%5d\0", 0);
-      genieWriteStr(GENIE_STR_TIME_KEY, row);
+      objGenie.WriteStr(GENIE_STR_TIME_KEY, row);
       sprintf(row, "%4d\0", settingsDatetime.day);
-      genieWriteStr(GENIE_STR_DAY, row);
+      objGenie.WriteStr(GENIE_STR_DAY, row);
       sprintf(row, "%4d\0", settingsDatetime.mon);
-      genieWriteStr(GENIE_STR_MONTH, row);
+      objGenie.WriteStr(GENIE_STR_MONTH, row);
       sprintf(row, "%4d\0", settingsDatetime.year);
-      genieWriteStr(GENIE_STR_YEAR, row);
-      sprintf(row, "%4d\0", settingsDatetime.wday);
-      genieWriteStr(GENIE_STR_WDAY, row);
+      objGenie.WriteStr(GENIE_STR_YEAR, row);
       sprintf(row, "%4d\0", settingsDatetime.hour);
-      genieWriteStr(GENIE_STR_HOUR, row);
+      objGenie.WriteStr(GENIE_STR_HOUR, row);
       sprintf(row, "%4d\0", settingsDatetime.min);
-      genieWriteStr(GENIE_STR_MIN, row);
+      objGenie.WriteStr(GENIE_STR_MIN, row);
       sprintf(row, "%4d\0", settingsTimeout);
-      genieWriteStr(GENIE_STR_SLEEP_TIMEOUT, row);
+      objGenie.WriteStr(GENIE_STR_SLEEP_TIMEOUT, row);
       break;
     case GENIE_FORM_SLEEP:
-      genieWriteContrast(0);
+      objGenie.WriteContrast(0);
       wakeupLCD = 0;
       break;
     case GENIE_FORM_MAIN:
@@ -261,7 +260,7 @@ void lcdEventHandler(void) {
   char row[8];
   long iValue;
   genieFrame Event;
-  genieDequeueEvent(&Event);
+  objGenie.DequeueEvent(&Event);
 
   if(AQUA_DEBUG_MODE_ON == 1) {
     Serial.println("----------");
@@ -287,10 +286,10 @@ void lcdEventHandler(void) {
         if(Event.reportObject.data_lsb > 0) { //manual control
           bool value = objRELAY.get(Event.reportObject.index);
           objRELAY.setManualValue(Event.reportObject.index, value);
-          genieWriteObject(GENIE_OBJ_4DBUTTON, Event.reportObject.index+relayCount, (value == AQUA_RELAY_OFF ? AQUA_RELAY_ON : AQUA_RELAY_OFF));
+          objGenie.WriteObject(GENIE_OBJ_4DBUTTON, Event.reportObject.index+relayCount, (value == AQUA_RELAY_OFF ? AQUA_RELAY_ON : AQUA_RELAY_OFF));
         } else { //auto control
           objRELAY.setManualValue(Event.reportObject.index, AQUA_RELAY_OFF);
-          genieWriteObject(GENIE_OBJ_4DBUTTON, Event.reportObject.index+relayCount, AQUA_RELAY_ON);
+          objGenie.WriteObject(GENIE_OBJ_4DBUTTON, Event.reportObject.index+relayCount, AQUA_RELAY_ON);
         }
       } else if(Event.reportObject.index >= relayCount && Event.reportObject.index < (relayCount*2)) { //turn on/off relay buttons
         objRELAY.setManualValue(Event.reportObject.index-relayCount, (Event.reportObject.data_lsb == AQUA_RELAY_OFF ? AQUA_RELAY_ON : AQUA_RELAY_OFF));
@@ -336,7 +335,7 @@ void lcdEventHandler(void) {
             }
             sprintf(row, "%4d\0", iValue);
             settingsDatetime.day = iValue;
-            genieWriteStr(GENIE_STR_DAY, row);
+            objGenie.WriteStr(GENIE_STR_DAY, row);
           } else if(Event.reportObject.index == GENIE_BTN_SET_MONTH) {
             if(iValue < 0) {
               iValue = 0;
@@ -345,7 +344,7 @@ void lcdEventHandler(void) {
             }
             sprintf(row, "%4d\0", iValue);
             settingsDatetime.mon = iValue;
-            genieWriteStr(GENIE_STR_MONTH, row);
+            objGenie.WriteStr(GENIE_STR_MONTH, row);
           } else if(Event.reportObject.index == GENIE_BTN_SET_YEAR) {
             if(iValue < 100) {
               iValue+= 2000;
@@ -356,16 +355,7 @@ void lcdEventHandler(void) {
             }
             sprintf(row, "%4d\0", iValue);
             settingsDatetime.year = iValue;
-            genieWriteStr(GENIE_STR_YEAR, row);
-          } else if(Event.reportObject.index == GENIE_BTN_SET_WDAY) {
-            if(iValue < 0) {
-              iValue = 0;
-            } else if(iValue > 7) {
-              iValue = 7;
-            }
-            sprintf(row, "%4d\0", iValue);
-            settingsDatetime.wday = iValue;
-            genieWriteStr(GENIE_STR_WDAY, row);
+            objGenie.WriteStr(GENIE_STR_YEAR, row);
           } else if(Event.reportObject.index == GENIE_BTN_SET_HOUR) {
             if(iValue < 0) {
               iValue = 0;
@@ -374,7 +364,7 @@ void lcdEventHandler(void) {
             }
             sprintf(row, "%4d\0", iValue);
             settingsDatetime.hour = iValue;
-            genieWriteStr(GENIE_STR_HOUR, row);
+            objGenie.WriteStr(GENIE_STR_HOUR, row);
           } else if(Event.reportObject.index == GENIE_BTN_SET_MIN) {
             if(iValue < 0) {
               iValue = 0;
@@ -383,7 +373,7 @@ void lcdEventHandler(void) {
             }
             sprintf(row, "%4d\0", iValue);
             settingsDatetime.min = iValue;
-            genieWriteStr(GENIE_STR_MIN, row);
+            objGenie.WriteStr(GENIE_STR_MIN, row);
           } else if(Event.reportObject.index == GENIE_BTN_SET_TIMEOUT) {
             if(iValue < 0) {
               iValue = 0;
@@ -392,19 +382,17 @@ void lcdEventHandler(void) {
             }
             sprintf(row, "%4d\0", iValue);
             settingsTimeout = iValue;
-            genieWriteStr(GENIE_STR_SLEEP_TIMEOUT, row);
+            objGenie.WriteStr(GENIE_STR_SLEEP_TIMEOUT, row);
           }
         } else if(Event.reportObject.index >= GENIE_BTN_SAVE_DATE && Event.reportObject.index <= GENIE_BTN_SAVE_TIMEOUT) { //Time settings - "Save" buttons
           if(Event.reportObject.index == GENIE_BTN_SAVE_DATE) {
             objTIME.setDate(settingsDatetime.day, settingsDatetime.mon, settingsDatetime.year);
           } else if(Event.reportObject.index == GENIE_BTN_SAVE_TIME) {
             objTIME.setTime(settingsDatetime.hour, settingsDatetime.min, 0);
-          } else if(Event.reportObject.index == GENIE_BTN_SAVE_WDAY) {
-            objTIME.setWday(settingsDatetime.wday);
           } else if(Event.reportObject.index == GENIE_BTN_SAVE_TIMEOUT) {
             objLCD.setTimeout(settingsTimeout);
           }
-          genieWriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_TIME, Event.reportObject.index - GENIE_BTN_SET_TIMEOUT);
+          objGenie.WriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_TIME, Event.reportObject.index - GENIE_BTN_SET_TIMEOUT);
         } else if(Event.reportObject.index >= GENIE_BTN_ALARM_SET_START && Event.reportObject.index <= GENIE_BTN_ALARM_SET_STOP) { //Alarm settings - "Set" buttons
           keyboardStart = true;
           int iPos = keyboardString.indexOf('.');
@@ -425,14 +413,14 @@ void lcdEventHandler(void) {
           sprintf(row, "%2d.%02d\0", (int)(iValue/100), iValue%100);
           if(Event.reportObject.index == GENIE_BTN_ALARM_SET_START) {
             settingsAlarm.start = iValue;
-            genieWriteStr(GENIE_STR_ALARM_START, row);
+            objGenie.WriteStr(GENIE_STR_ALARM_START, row);
           } else if(Event.reportObject.index == GENIE_BTN_ALARM_SET_STOP) {
             settingsAlarm.stop = iValue;
-            genieWriteStr(GENIE_STR_ALARM_STOP, row);
+            objGenie.WriteStr(GENIE_STR_ALARM_STOP, row);
           }
         } else if(Event.reportObject.index == GENIE_BTN_SAVE_ALARM) { //Alarm settings - "Save" button
           objRELAY.writeRelayAlarm(settingsRelay, &settingsAlarm);
-          genieWriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_ALARM, 1);
+          objGenie.WriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_ALARM, 1);
         } else if(Event.reportObject.index >= GENIE_BTN_TIMER1_SET_START && Event.reportObject.index <= GENIE_BTN_TIMER4_SET_STOP) { //Timer settings - "Set" buttons
           keyboardStart = true;
           int iPos = keyboardString.indexOf(':');
@@ -452,32 +440,32 @@ void lcdEventHandler(void) {
           sprintf(row, "%2d:%02d\0", (int)(iValue/60), iValue%60);
           if(Event.reportObject.index == GENIE_BTN_TIMER1_SET_START) {
             settingsTimer[0].from = iValue;
-            genieWriteStr(GENIE_STR_TIMER1_START, row);
+            objGenie.WriteStr(GENIE_STR_TIMER1_START, row);
           } else if(Event.reportObject.index == GENIE_BTN_TIMER1_SET_STOP) {
             settingsTimer[0].to = iValue;
-            genieWriteStr(GENIE_STR_TIMER1_STOP, row);
+            objGenie.WriteStr(GENIE_STR_TIMER1_STOP, row);
           } else if(Event.reportObject.index == GENIE_BTN_TIMER2_SET_START) {
             settingsTimer[1].from = iValue;
-            genieWriteStr(GENIE_STR_TIMER2_START, row);
+            objGenie.WriteStr(GENIE_STR_TIMER2_START, row);
           } else if(Event.reportObject.index == GENIE_BTN_TIMER2_SET_STOP) {
             settingsTimer[1].to = iValue;
-            genieWriteStr(GENIE_STR_TIMER2_STOP, row);
+            objGenie.WriteStr(GENIE_STR_TIMER2_STOP, row);
           } else if(Event.reportObject.index == GENIE_BTN_TIMER3_SET_START) {
             settingsTimer[2].from = iValue;
-            genieWriteStr(GENIE_STR_TIMER3_START, row);
+            objGenie.WriteStr(GENIE_STR_TIMER3_START, row);
           } else if(Event.reportObject.index == GENIE_BTN_TIMER3_SET_STOP) {
             settingsTimer[2].to = iValue;
-            genieWriteStr(GENIE_STR_TIMER3_STOP, row);
+            objGenie.WriteStr(GENIE_STR_TIMER3_STOP, row);
           } else if(Event.reportObject.index == GENIE_BTN_TIMER4_SET_START) {
             settingsTimer[3].from = iValue;
-            genieWriteStr(GENIE_STR_TIMER4_START, row);
+            objGenie.WriteStr(GENIE_STR_TIMER4_START, row);
           } else if(Event.reportObject.index == GENIE_BTN_TIMER4_SET_STOP) {
             settingsTimer[3].to = iValue;
-            genieWriteStr(GENIE_STR_TIMER4_STOP, row);
+            objGenie.WriteStr(GENIE_STR_TIMER4_STOP, row);
           }
         } else if(Event.reportObject.index >= GENIE_BTN_SAVE_TIMER1 && Event.reportObject.index <= GENIE_BTN_SAVE_TIMER4) { //Timer settings - "Save" buttons
           objRELAY.writeRelayTimer(settingsRelay, Event.reportObject.index - GENIE_BTN_SAVE_TIMER1, &settingsTimer[Event.reportObject.index - GENIE_BTN_SAVE_TIMER1]);
-          genieWriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_TIMER, Event.reportObject.index - GENIE_BTN_TIMER4_SET_STOP);
+          objGenie.WriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_TIMER, Event.reportObject.index - GENIE_BTN_TIMER4_SET_STOP);
         } else if(Event.reportObject.index >= GENIE_BTN_CAL1_SET_REF && Event.reportObject.index <= GENIE_BTN_CAL3_SET_REF) { //Calibration - "Set" buttons
           keyboardStart = true;
           int iPos = keyboardString.indexOf('.');
@@ -518,11 +506,11 @@ void lcdEventHandler(void) {
             sprintf(row, "%+5d\0", orpCalPoint[Event.reportObject.index - GENIE_BTN_CAL1_SET_REF].refValue);
           }
           if(Event.reportObject.index == GENIE_BTN_CAL1_SET_REF) {
-            genieWriteStr(GENIE_STR_CAl1_REF_NEW, row);
+            objGenie.WriteStr(GENIE_STR_CAl1_REF_NEW, row);
           } else if(Event.reportObject.index == GENIE_BTN_CAL2_SET_REF) {
-            genieWriteStr(GENIE_STR_CAl2_REF_NEW, row);
+            objGenie.WriteStr(GENIE_STR_CAl2_REF_NEW, row);
           } else if(Event.reportObject.index == GENIE_BTN_CAL3_SET_REF) {
-            genieWriteStr(GENIE_STR_CAl3_REF_NEW, row);
+            objGenie.WriteStr(GENIE_STR_CAl3_REF_NEW, row);
           }
         } else if(Event.reportObject.index >= GENIE_BTN_CAL1_READ_ACT && Event.reportObject.index <= GENIE_BTN_CAL3_READ_ACT) { //Calibration - "Read" buttons
           displayForm(GENIE_FORM_CALIBRATION_SHOW, Event.reportObject.index);
@@ -540,27 +528,27 @@ void lcdEventHandler(void) {
               objORP.calibration(i, &orpCalPoint[i]);
             }
           }
-          genieWriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_CALIBRATION, 1);
+          objGenie.WriteObject(GENIE_OBJ_STRINGS, GENIE_STR_INFO_CALIBRATION, 1);
         }
       }
     } else if(Event.reportObject.object == GENIE_OBJ_USERBUTTON) {
       if(Event.reportObject.index == GENIE_BTN_WAKEUP) {
         displayForm(GENIE_FORM_MAIN);
-        genieWriteContrast(1);
+        objGenie.WriteContrast(1);
       }
     } else if(Event.reportObject.object == GENIE_OBJ_KEYBOARD) {
-      uint8_t keyboardValue = genieGetEventData(&Event);
+      uint8_t keyboardValue = objGenie.GetEventData(&Event);
       if(keyboardValue == GENIE_KEYBOARD_CLEAR_KEY) {
           keyboardStart = true;
           sprintf(row, "%5d\0", 0);
           if(Event.reportObject.index == GENIE_KEYBOARD_TIME) {
-            genieWriteStr(GENIE_STR_TIME_KEY, row);
+            objGenie.WriteStr(GENIE_STR_TIME_KEY, row);
           } else if(Event.reportObject.index == GENIE_KEYBOARD_ALARM) {
-            genieWriteStr(GENIE_STR_ALARM_KEY, row);
+            objGenie.WriteStr(GENIE_STR_ALARM_KEY, row);
           } else if(Event.reportObject.index == GENIE_KEYBOARD_TIMER) {
-            genieWriteStr(GENIE_STR_TIMER_KEY, row);
+            objGenie.WriteStr(GENIE_STR_TIMER_KEY, row);
           } else if(Event.reportObject.index == GENIE_KEYBOARD_CALIBRATION) {
-            genieWriteStr(GENIE_STR_CAL_KEY, row);
+            objGenie.WriteStr(GENIE_STR_CAL_KEY, row);
           }
       } else {
         if(keyboardStart) {
@@ -574,13 +562,13 @@ void lcdEventHandler(void) {
         keyboardString.toCharArray(tmp, 6);
         sprintf(row, "%5s\0", tmp);
         if(Event.reportObject.index == GENIE_KEYBOARD_TIME) {
-          genieWriteStr(GENIE_STR_TIME_KEY, row);
+          objGenie.WriteStr(GENIE_STR_TIME_KEY, row);
         } else if(Event.reportObject.index == GENIE_KEYBOARD_ALARM) {
-          genieWriteStr(GENIE_STR_ALARM_KEY, row);
+          objGenie.WriteStr(GENIE_STR_ALARM_KEY, row);
         } else if(Event.reportObject.index == GENIE_KEYBOARD_TIMER) {
-          genieWriteStr(GENIE_STR_TIMER_KEY, row);
+          objGenie.WriteStr(GENIE_STR_TIMER_KEY, row);
         } else if(Event.reportObject.index == GENIE_KEYBOARD_CALIBRATION) {
-          genieWriteStr(GENIE_STR_CAL_KEY, row);
+          objGenie.WriteStr(GENIE_STR_CAL_KEY, row);
         }
       }
     }
@@ -599,7 +587,7 @@ void writeActualValue() {
   } else if(calibration == GENIE_CALIBRATION_ORP) {
     sprintf(row, "%+5d\0", objORP.getORP(1));
   }
-  genieWriteStr(GENIE_STR_ACTUAL_VALUE, row);
+  objGenie.WriteStr(GENIE_STR_ACTUAL_VALUE, row);
 }
 
 /*** check all what need and set all what need ;-) ***/
@@ -647,34 +635,34 @@ void checkRelay(uint16_t tstamp, float temp, float pH) {
 
 /*** print status to LCD ***/
 void printStatusToLCD(AQUA_datetime *datetimeStruct, float temp, float pH, int orp) {
-  char row[17];
+  char row[24];
   if(datetimeStruct->day > 0) {
-    sprintf(row, "%02d.%02d.%4d %02d:%02d\0", datetimeStruct->day, datetimeStruct->mon, datetimeStruct->year, datetimeStruct->hour, datetimeStruct->min);
-    genieWriteStr(GENIE_STR_TIME, row);
+    sprintf(row, "%02d.%02d.%4d %02d:%02d:%02d (%01d)\0", datetimeStruct->day, datetimeStruct->mon, datetimeStruct->year, datetimeStruct->hour, datetimeStruct->min, datetimeStruct->sec, datetimeStruct->wday);
+    objGenie.WriteStr(GENIE_STR_TIME, row);
   } else {
-    genieWriteStr(GENIE_STR_TIME, "OFF");
+    objGenie.WriteStr(GENIE_STR_TIME, "OFF");
   }
   if(temp > 0) {
     sprintf(row, "%2d.%02d\0", (int)temp, (int)(temp*100)%100);
-    genieWriteStr(GENIE_STR_TEMP, row);
+    objGenie.WriteStr(GENIE_STR_TEMP, row);
   } else {
-    genieWriteStr(GENIE_STR_TEMP, "OFF");
+    objGenie.WriteStr(GENIE_STR_TEMP, "OFF");
   }
   if(pH > 0) {
     sprintf(row, "%2d.%02d\0", (int)pH, (int)(pH*100)%100);
-    genieWriteStr(GENIE_STR_PH, row);
+    objGenie.WriteStr(GENIE_STR_PH, row);
   } else {
-    genieWriteStr(GENIE_STR_PH, "OFF");
+    objGenie.WriteStr(GENIE_STR_PH, "OFF");
   }
   if(orp != 0) {
     sprintf(row, "%+5d\0", orp);
-    genieWriteStr(GENIE_STR_ORP, row);
+    objGenie.WriteStr(GENIE_STR_ORP, row);
   } else {
-    genieWriteStr(GENIE_STR_ORP, "OFF");
+    objGenie.WriteStr(GENIE_STR_ORP, "OFF");
   }
 
   for(uint8_t i = 0; i < relayCount; i++) {
-    genieWriteObject(GENIE_OBJ_LED, i, (objRELAY.get(i) == AQUA_RELAY_ON ? 1 : 0));
+    objGenie.WriteObject(GENIE_OBJ_LED, i, (objRELAY.get(i) == AQUA_RELAY_ON ? 1 : 0));
   }
 
   delay(100);
@@ -685,7 +673,7 @@ void printStatusToSerial(AQUA_datetime *datetimeStruct, float temp, float pH, in
   Serial.println("");Serial.print("Date: ");
   Serial.print(datetimeStruct->day);Serial.print(".");
   Serial.print(datetimeStruct->mon);Serial.print(".");
-  Serial.print(datetimeStruct->year);Serial.print(" - ");Serial.println(datetimeStruct->wday);
+  Serial.print(datetimeStruct->year);Serial.print(" (");Serial.print(datetimeStruct->wday);Serial.println(")");
   Serial.print("Time: ");
   Serial.print(datetimeStruct->hour);Serial.print(":");
   Serial.print(datetimeStruct->min);Serial.print(":");
@@ -704,7 +692,7 @@ void printStatusToSerial(AQUA_datetime *datetimeStruct, float temp, float pH, in
 
 /*** setup function ***/
 void setup() {
-  analogReference(EXTERNAL); //use AREF for reference voltage (connect 3.3V pin to AREF pin)
+//  analogReference(EXTERNAL); //use AREF for reference voltage (connect 3.3V pin to AREF pin)
 
   if(AQUA_DEBUG_MODE_ON == 1) {
     Serial.begin(115200);
@@ -741,24 +729,27 @@ void setup() {
   }
   switch(AQUA_LCD_SERIAL) {
     case 3:
-      genieBegin(GENIE_SERIAL_3, AQUA_LCD_SERIAL_SPEED);
+      Serial3.begin(AQUA_LCD_SERIAL_SPEED);
+      objGenie.Begin(Serial3);
       break;
     case 2:
-      genieBegin(GENIE_SERIAL_2, AQUA_LCD_SERIAL_SPEED);
+      Serial2.begin(AQUA_LCD_SERIAL_SPEED);
+      objGenie.Begin(Serial2);
       break;
     case 1:
     default:
-      genieBegin(GENIE_SERIAL_1, AQUA_LCD_SERIAL_SPEED);
+      Serial1.begin(AQUA_LCD_SERIAL_SPEED);
+      objGenie.Begin(Serial1);
       break;
   }
-  genieAttachEventHandler(lcdEventHandler);
+  objGenie.AttachEventHandler(lcdEventHandler);
   pinMode(AQUA_LCD_RESET_PIN, OUTPUT); //Set D4 on Arduino to Output
   digitalWrite(AQUA_LCD_RESET_PIN, LOW); //Reset the Display via D4
   delay(100);
   digitalWrite(AQUA_LCD_RESET_PIN, HIGH); //unReset the Display via D4
   delay(4000); //let the display start up
   displayForm(GENIE_FORM_MAIN);
-  genieWriteContrast(1);
+  objGenie.WriteContrast(1);
   objLCD.init(AQUA_LCD_TIMEOUT_ADDR);
 
   if(AQUA_DEBUG_MODE_ON == 1) {
@@ -780,7 +771,7 @@ void setup() {
 
 /*** loop function ***/
 void loop() {
-  genieDoEvents();
+  objGenie.DoEvents();
   if(wakeupLCD == 1 && calibration > GENIE_CALIBRATION_OFF) {
     if(calWV < millis() - 500) {
       writeActualValue();
@@ -796,7 +787,7 @@ void loop() {
     }
     if(wakeupLCD == 0) {
       displayForm(GENIE_FORM_MAIN);
-      genieWriteContrast(1);
+      objGenie.WriteContrast(1);
       wakeupLCD = 1;
     }
   }

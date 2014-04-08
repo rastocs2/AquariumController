@@ -111,7 +111,7 @@ Strings
     StringsStyle                 Message
     Top                          4
     Visible                      Yes
-    Width                        130
+    Width                        200
     OnChanged                    ''
 end
 WinButton
@@ -132,7 +132,7 @@ WinButton
     Font.Size                    8
     Font.Style                   []
     Height                       15
-    Left                         184
+    Left                         256
     Matrix                       -1
     Momentary                    Yes
     Picture                      (None)
@@ -1401,7 +1401,7 @@ Strings
     Font.Strikethrough           No
     Font.Underline               No
     Left                         120
-    Strings                      24
+    Strings                      1
     StringsStyle                 Message
     Top                          30
     Visible                      Yes
@@ -1487,7 +1487,7 @@ Strings
     Font.Strikethrough           No
     Font.Underline               No
     Left                         120
-    Strings                      12
+    Strings                      1
     StringsStyle                 Message
     Top                          48
     Visible                      Yes
@@ -1573,7 +1573,7 @@ Strings
     Font.Strikethrough           No
     Font.Underline               No
     Left                         120
-    Strings                      2013
+    Strings                      2000
     StringsStyle                 Message
     Top                          66
     Visible                      Yes
@@ -1629,92 +1629,6 @@ WinButton
     OnTouchReleased              ''
 end
 Label
-    Name                         Label7
-    4DGLFont.Font                FONT3
-    4DGLFont.Bold                No
-    4DGLFont.Italic              No
-    4DGLFont.Inverse             No
-    4DGLFont.Underline           No
-    4DGLFont.MagWidth            1
-    4DGLFont.MagHeight           1
-    4DGLFont.Opaque              Yes
-    BGcolor                      BLACK
-    Caption                      Weekday:
-    FGcolor                      SEAGREEN
-    Left                         4
-    Top                          84
-end
-Strings
-    Name                         Strings8
-    Alignment                    Right
-    BGcolor                      BLACK
-    Height                       12
-    FGcolor                      FIREBRICK
-    Font.Bold                    No
-    Font.CharSet                 ANSI
-    Font.Italic                  No
-    Font.Name                    '4D Font3 (8x12)'
-    Font.Opaque                  Yes
-    Font.Size                    12
-    Font.Strikethrough           No
-    Font.Underline               No
-    Left                         120
-    Strings                      6
-    StringsStyle                 Message
-    Top                          84
-    Visible                      Yes
-    Width                        32
-    OnChanged                    ''
-end
-WinButton
-    Name                         Winbutton20
-    Appearance.Alignment         Center
-    Appearance.Layout            Left
-    Appearance.PictureAlignment  Right
-    Appearance.SimpleLayout      No
-    Appearance.Spacing           3
-    AutoSizeToPicture            No
-    Bevel                        Yes
-    BevelColor                   SKYBLUE
-    Caption                      Set
-    Color                        SKYBLUE
-    Font.Color                   clWindowText
-    Font.Effects                 []
-    Font.Name                    Tahoma
-    Font.Size                    8
-    Font.Style                   []
-    Height                       16
-    Left                         156
-    Matrix                       -1
-    Momentary                    Yes
-    Picture                      (None)
-    StatusWhenOff.BGcolor        RED
-    StatusWhenOff.Caption        ''
-    StatusWhenOff.Glow           Yes
-    StatusWhenOff.Color          WHITE
-    StatusWhenOff.Effects        []
-    StatusWhenOff.Name           Tahoma
-    StatusWhenOff.Size           8
-    StatusWhenOff.Style          []
-    StatusWhenOff.Visible        Yes
-    StatusWhenOn.BGcolor         RED
-    StatusWhenOn.Caption         ''
-    StatusWhenOn.Glow            Yes
-    StatusWhenOn.Color           WHITE
-    StatusWhenOn.Effects         []
-    StatusWhenOn.Name            Tahoma
-    StatusWhenOn.Size            8
-    StatusWhenOn.Style           []
-    StatusWhenOn.Visible         Yes
-    Top                          81
-    Visible                      Yes
-    Width                        32
-    OnChanged                    'Report Message'
-    OnTouchMoving                ''
-    OnTouchPressed               ''
-    OnTouchReleased              ''
-end
-Label
     Name                         Label8
     4DGLFont.Font                FONT3
     4DGLFont.Bold                No
@@ -1728,7 +1642,7 @@ Label
     Caption                      Hours:
     FGcolor                      SEAGREEN
     Left                         4
-    Top                          102
+    Top                          108
 end
 Strings
     Name                         Strings9
@@ -1745,9 +1659,9 @@ Strings
     Font.Strikethrough           No
     Font.Underline               No
     Left                         120
-    Strings                      22
+    Strings                      0
     StringsStyle                 Message
-    Top                          102
+    Top                          108
     Visible                      Yes
     Width                        32
     OnChanged                    ''
@@ -1792,7 +1706,7 @@ WinButton
     StatusWhenOn.Size            8
     StatusWhenOn.Style           []
     StatusWhenOn.Visible         Yes
-    Top                          99
+    Top                          105
     Visible                      Yes
     Width                        32
     OnChanged                    'Report Message'
@@ -1814,7 +1728,7 @@ Label
     Caption                      Minutes:
     FGcolor                      SEAGREEN
     Left                         4
-    Top                          120
+    Top                          126
 end
 Strings
     Name                         Strings10
@@ -1831,9 +1745,9 @@ Strings
     Font.Strikethrough           No
     Font.Underline               No
     Left                         120
-    Strings                      54
+    Strings                      0
     StringsStyle                 Message
-    Top                          120
+    Top                          126
     Visible                      Yes
     Width                        32
     OnChanged                    ''
@@ -1878,7 +1792,7 @@ WinButton
     StatusWhenOn.Size            8
     StatusWhenOn.Style           []
     StatusWhenOn.Visible         Yes
-    Top                          117
+    Top                          123
     Visible                      Yes
     Width                        32
     OnChanged                    'Report Message'
@@ -1900,7 +1814,7 @@ Label
     Caption                      'Sleep timeout:'
     FGcolor                      SEAGREEN
     Left                         4
-    Top                          138
+    Top                          172
 end
 Strings
     Name                         Strings11
@@ -1919,7 +1833,7 @@ Strings
     Left                         120
     Strings                      30
     StringsStyle                 Message
-    Top                          138
+    Top                          172
     Visible                      Yes
     Width                        32
     OnChanged                    ''
@@ -1964,7 +1878,7 @@ WinButton
     StatusWhenOn.Size            8
     StatusWhenOn.Style           []
     StatusWhenOn.Visible         Yes
-    Top                          135
+    Top                          169
     Visible                      Yes
     Width                        32
     OnChanged                    'Report Message'
@@ -1990,7 +1904,7 @@ WinButton
     Font.Size                    8
     Font.Style                   []
     Height                       16
-    Left                         140
+    Left                         128
     Matrix                       -1
     Momentary                    Yes
     Picture                      (None)
@@ -2012,7 +1926,7 @@ WinButton
     StatusWhenOn.Size            8
     StatusWhenOn.Style           []
     StatusWhenOn.Visible         Yes
-    Top                          160
+    Top                          81
     Visible                      Yes
     Width                        60
     OnChanged                    'Report Message'
@@ -2038,7 +1952,7 @@ WinButton
     Font.Size                    8
     Font.Style                   []
     Height                       16
-    Left                         140
+    Left                         128
     Matrix                       -1
     Momentary                    Yes
     Picture                      (None)
@@ -2060,57 +1974,9 @@ WinButton
     StatusWhenOn.Size            8
     StatusWhenOn.Style           []
     StatusWhenOn.Visible         Yes
-    Top                          180
+    Top                          141
     Visible                      Yes
     Width                        60
-    OnChanged                    'Report Message'
-    OnTouchMoving                ''
-    OnTouchPressed               ''
-    OnTouchReleased              ''
-end
-WinButton
-    Name                         Winbutton26
-    Appearance.Alignment         Center
-    Appearance.Layout            Left
-    Appearance.PictureAlignment  Right
-    Appearance.SimpleLayout      No
-    Appearance.Spacing           3
-    AutoSizeToPicture            No
-    Bevel                        Yes
-    BevelColor                   YELLOWGREEN
-    Caption                      'Save weekday'
-    Color                        YELLOWGREEN
-    Font.Color                   clWindowText
-    Font.Effects                 []
-    Font.Name                    Tahoma
-    Font.Size                    8
-    Font.Style                   []
-    Height                       16
-    Left                         140
-    Matrix                       -1
-    Momentary                    Yes
-    Picture                      (None)
-    StatusWhenOff.BGcolor        RED
-    StatusWhenOff.Caption        ''
-    StatusWhenOff.Glow           Yes
-    StatusWhenOff.Color          WHITE
-    StatusWhenOff.Effects        []
-    StatusWhenOff.Name           Tahoma
-    StatusWhenOff.Size           8
-    StatusWhenOff.Style          []
-    StatusWhenOff.Visible        Yes
-    StatusWhenOn.BGcolor         RED
-    StatusWhenOn.Caption         ''
-    StatusWhenOn.Glow            Yes
-    StatusWhenOn.Color           WHITE
-    StatusWhenOn.Effects         []
-    StatusWhenOn.Name            Tahoma
-    StatusWhenOn.Size            8
-    StatusWhenOn.Style           []
-    StatusWhenOn.Visible         Yes
-    Top                          200
-    Visible                      Yes
-    Width                        84
     OnChanged                    'Report Message'
     OnTouchMoving                ''
     OnTouchPressed               ''
@@ -2134,7 +2000,7 @@ WinButton
     Font.Size                    8
     Font.Style                   []
     Height                       16
-    Left                         140
+    Left                         82
     Matrix                       -1
     Momentary                    Yes
     Picture                      (None)
@@ -2156,7 +2022,7 @@ WinButton
     StatusWhenOn.Size            8
     StatusWhenOn.Style           []
     StatusWhenOn.Visible         Yes
-    Top                          220
+    Top                          188
     Visible                      Yes
     Width                        106
     OnChanged                    'Report Message'
@@ -2179,7 +2045,7 @@ Strings
     Font.Strikethrough           No
     Font.Underline               No
     Left                         4
-    Strings                      '\nDate saved\nTime saved\nWeekday saved\nTimeout saved'
+    Strings                      '\nDate saved\nTime saved\nTimeout saved'
     StringsStyle                 Message
     Top                          224
     Visible                      Yes
@@ -4729,7 +4595,7 @@ Gauge
     Color                        BLACK
     Height                       80
     Interval                     100
-    Left                         12
+    Left                         10
     Maxvalue                     100
     Minvalue                     0
     Orientation                  Horizontal
@@ -4748,7 +4614,7 @@ Gauge
     Timer                        (None)
     Top                          100
     Visible                      Yes
-    Width                        296
+    Width                        300
     OnChanged                    ''
     OnTouchMoving                ''
     OnTouchPressed               ''

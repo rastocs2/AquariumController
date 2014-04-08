@@ -56,13 +56,11 @@
 #define GENIE_BTN_SET_DAY          17
 #define GENIE_BTN_SET_MONTH        18
 #define GENIE_BTN_SET_YEAR         19
-#define GENIE_BTN_SET_WDAY         20
 #define GENIE_BTN_SET_HOUR         21
 #define GENIE_BTN_SET_MIN          22
 #define GENIE_BTN_SET_TIMEOUT      23
 #define GENIE_BTN_SAVE_DATE        24
 #define GENIE_BTN_SAVE_TIME        25
-#define GENIE_BTN_SAVE_WDAY        26
 #define GENIE_BTN_SAVE_TIMEOUT     27
 
 #define GENIE_BTN_ALARM_STATE      16
@@ -115,7 +113,6 @@
 #define GENIE_STR_DAY               5
 #define GENIE_STR_MONTH             6
 #define GENIE_STR_YEAR              7
-#define GENIE_STR_WDAY              8
 #define GENIE_STR_HOUR              9
 #define GENIE_STR_MIN              10
 #define GENIE_STR_SLEEP_TIMEOUT    11
