@@ -187,15 +187,19 @@ AQUA_datetime AQUA_time::getDateTime() {
         _isDST = true;
       }
     }
-    if (_isDST) {
+    if(_isDST) {
       datetimeStruct.hour++;
     }
-    if (datetimeStruct.mon >= 3 && datetimeStruct.mon <= 10 && datetimeStruct.hour >= 24) {
+    if(datetimeStruct.mon >= 3 && datetimeStruct.mon <= 10 && datetimeStruct.hour >= 24) {
       datetimeStruct.hour-= 24;
       datetimeStruct.day++;
-      if (datetimeStruct.day > daysInMonths[datetimeStruct.mon-1]) {
+      if(datetimeStruct.day > daysInMonths[datetimeStruct.mon-1]) {
         datetimeStruct.day = 1;
         datetimeStruct.mon++;
+      }
+      datetimeStruct.wday++;
+      if(datetimeStruct.wday > 7) {
+        datetimeStruct.wday = 1;
       }
     }
   }
