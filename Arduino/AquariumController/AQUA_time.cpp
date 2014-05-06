@@ -162,6 +162,28 @@ AQUA_datetime AQUA_time::getDateTime() {
   datetimeStruct.mon  = _decode(_regDateTime[5]);
   datetimeStruct.year = _decode(_regDateTime[6]) + 2000;
 
+  if(datetimeStruct.sec < 0 || datetimeStruct.sec > 60) {
+    datetimeStruct.sec = 0;
+  }
+  if(datetimeStruct.min < 0 || datetimeStruct.min > 60) {
+    datetimeStruct.min = 0;
+  }
+  if(datetimeStruct.hour < 0 || datetimeStruct.hour > 24) {
+    datetimeStruct.hour = 0;
+  }
+  if(datetimeStruct.wday < 1 || datetimeStruct.wday > 7) {
+    datetimeStruct.wday = 1;
+  }
+  if(datetimeStruct.day < 1 || datetimeStruct.day > 31) {
+    datetimeStruct.day = 1;
+  }
+  if(datetimeStruct.mon < 1 || datetimeStruct.mon > 12) {
+    datetimeStruct.mon = 1;
+  }
+  if(datetimeStruct.year < 2000 || datetimeStruct.year > 2099) {
+    datetimeStruct.year = 2000;
+  }
+
   _isDST = false;
   if(_useDST) {
     //DST start in last sunday in march about 01:00 GMT and end in last sunday in october about 01:00 GMT
