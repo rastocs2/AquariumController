@@ -1,7 +1,7 @@
 /*
   Project: Aquarium Controller
   Library: ORP
-  Version: 1.0
+  Version: 2.1
   Author: Rastislav Birka
 */
 
@@ -58,6 +58,23 @@ void AQUA_orp::init(uint8_t voutPin, uint8_t vocmPin, uint8_t calibrate_points, 
     }
   }
   _setCalibrationValues();
+  useInternalADC();
+  objADC141S626 = new AQUA_adc141s626;
+  objADS1115 = new AQUA_ads1115;
+}
+
+void AQUA_orp::useInternalADC() {
+  _adc = 0;
+}
+
+void AQUA_orp::useADC141S626(uint8_t voutPin, uint8_t misoPin, uint8_t mosiPin, uint8_t sclkPin, uint8_t ssPin) {
+  _adc = 1;
+  objADC141S626->init(voutPin, misoPin, mosiPin, sclkPin, ssPin);
+}
+
+void AQUA_orp::useADS1115(uint8_t sdaPin, uint8_t sclPin) {
+  _adc = 2;
+  objADS1115->init(sdaPin, sclPin);
 }
 
 /*
@@ -65,27 +82,19 @@ LMP91200
 ORP = VOUT - VOCM
 */
 int AQUA_orp::getORP(bool calibrate) {
-  int tmp, total = 0;
-  int values[120];
+  uint8_t i;
   int res;
-  uint8_t i, j;
 
-  for(i = 0; i < 120; i++) {
-    values[i] = analogRead(_voutPin) - analogRead(_vocmPin);
+  switch (_adc) {
+    case 2: //external ADS1115
+      res = (float)objADS1115->getValue();
+      break;
+    case 1: //external ADC141S626
+      res = (float)objADC141S626->getValue();
+      break;
+    default: //internal arduino ADC
+      res = _readInternalADC();
   }
-  for(i = 0; i < 119; i++) {
-    for(j = i+1; j < 120; j++) {
-      if(values[i] > values[j]) {
-        tmp = values[i];
-        values[i] = values[j];
-        values[j] = tmp;
-      }
-    }
-  }
-  for(i = 10; i < 110; i++) {
-    total+= values[i];
-  }
-  res = round((float)(total/100.0)*_constPerUnit);
 
   if(calibrate == 0) {
     if(_usedPoints == 1) {
@@ -205,4 +214,33 @@ void AQUA_orp::_setCalibrationValues() {
       _const[i*2 + 1] = _usedData[i+1].refValue - _const[i*2]*_usedData[i+1].actValue;
     }
   }
+}
+
+/*
+LMP91200
+ORP = VOUT - VOCM
+*/
+int AQUA_orp::_readInternalADC() {
+  int tmp, total = 0;
+  int values[120];
+  int res;
+  uint8_t i, j;
+
+  for(i = 0; i < 120; i++) {
+    values[i] = analogRead(_voutPin) - analogRead(_vocmPin);
+  }
+  for(i = 0; i < 119; i++) {
+    for(j = i+1; j < 120; j++) {
+      if(values[i] > values[j]) {
+        tmp = values[i];
+        values[i] = values[j];
+        values[j] = tmp;
+      }
+    }
+  }
+  for(i = 10; i < 110; i++) {
+    total+= values[i];
+  }
+  res = round((float)(total/100.0)*_constPerUnit);
+  return res;
 }

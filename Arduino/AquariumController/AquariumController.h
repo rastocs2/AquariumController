@@ -1,7 +1,7 @@
 /*
   Project: Aquarium Controller
   Library: Constants
-  Version: 1.0
+  Version: 2.1
   Author: Rastislav Birka
 */
 
@@ -48,3 +48,13 @@
 #define AQUA_LCD_SERIAL             2 //which serial port is used for LCD //1 = pin 19(RX) and pin 18(TX), 2 = pin 17(RX) and pin 16(TX), 3 = pin 15(RX) and pin 14(TX)
 #define AQUA_LCD_SERIAL_SPEED  115200 //speed for serial communication
 #define AQUA_LCD_RESET_PIN          4 //pin for reset
+
+#define AQUA_SPI_MISO_PIN          50 //SPI MISO pin
+#define AQUA_SPI_MOSI_PIN          51 //SPI MOSI pin
+#define AQUA_SPI_SCLK_PIN          52 //SPI SCLK pin
+#define AQUA_SPI_SS_PIN            53 //SPI SS pin
+#define AQUA_SPI_PH_VOUT_PIN       49 //pH VOUT pin (ADC141S626)
+#define AQUA_SPI_ORP_VOUT_PIN      48 //ORP VOUT pin (ADC141S626)
+
+#define AQUA_ADS1115_SDA_PIN       46 //SDA pin
+#define AQUA_ADS1115_SCL_PIN       47 //SCL pin

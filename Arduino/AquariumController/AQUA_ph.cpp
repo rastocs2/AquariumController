@@ -1,7 +1,7 @@
 /*
   Project: Aquarium Controller
   Library: PH
-  Version: 1.0
+  Version: 2.1
   Author: Rastislav Birka
 */
 
@@ -50,6 +50,23 @@ void AQUA_ph::init(uint8_t voutPin, uint8_t vocmPin, uint8_t calibrate_points, u
     }
   }
   _setCalibrationValues();
+  useInternalADC();
+  objADC141S626 = new AQUA_adc141s626;
+  objADS1115 = new AQUA_ads1115;
+}
+
+void AQUA_ph::useInternalADC() {
+  _adc = 0;
+}
+
+void AQUA_ph::useADC141S626(uint8_t voutPin, uint8_t misoPin, uint8_t mosiPin, uint8_t sclkPin, uint8_t ssPin) {
+  _adc = 1;
+  objADC141S626->init(voutPin, misoPin, mosiPin, sclkPin, ssPin);
+}
+
+void AQUA_ph::useADS1115(uint8_t sdaPin, uint8_t sclPin) {
+  _adc = 2;
+  objADS1115->init(sdaPin, sclPin);
 }
 
 /*
@@ -58,27 +75,20 @@ pH = 7 + (VOUT - VOCM)/alpha
 alpha = -59.16mV/pH @ 25°C
 */
 float AQUA_ph::getPH(bool calibrate) {
-  int tmp, total = 0;
-  int values[120];
-  float res;
-  uint8_t i, j;
+  uint8_t i;
+  float res, adcValue;
 
-  for(i = 0; i < 120; i++) {
-    values[i] = analogRead(_voutPin) - analogRead(_vocmPin);
+  switch (_adc) {
+    case 2: //external ADS1115
+      adcValue = (float)objADS1115->getValue();
+      break;
+    case 1: //external ADC141S626
+      adcValue = (float)objADC141S626->getValue();
+      break;
+    default: //internal arduino ADC
+      adcValue = _readInternalADC();
   }
-  for(i = 0; i < 119; i++) {
-    for(j = i+1; j < 120; j++) {
-      if(values[i] > values[j]) {
-        tmp = values[i];
-        values[i] = values[j];
-        values[j] = tmp;
-      }
-    }
-  }
-  for(i = 10; i < 110; i++) {
-    total+= values[i];
-  }
-  res = 7.00 + ((float)(total/100.0)*_constPerUnit)/(0.0 - _alpha);
+  res = 7.00 + adcValue/(0.0 - _alpha);
 
   if(calibrate == 0) {
     if(_usedPoints == 1) {
@@ -191,4 +201,34 @@ void AQUA_ph::_setCalibrationValues() {
       _const[i*2 + 1] = _usedData[i+1].refValue - _const[i*2]*_usedData[i+1].actValue;
     }
   }
+}
+
+/*
+LMP91200
+pH = 7 + (VOUT - VOCM)/alpha
+alpha = -59.16mV/pH @ 25°C
+*/
+float AQUA_ph::_readInternalADC() {
+  int tmp, total = 0;
+  int values[120];
+  float res;
+  uint8_t i, j;
+
+  for(i = 0; i < 120; i++) {
+    values[i] = analogRead(_voutPin) - analogRead(_vocmPin);
+  }
+  for(i = 0; i < 119; i++) {
+    for(j = i+1; j < 120; j++) {
+      if(values[i] > values[j]) {
+        tmp = values[i];
+        values[i] = values[j];
+        values[j] = tmp;
+      }
+    }
+  }
+  for(i = 10; i < 110; i++) {
+    total+= values[i];
+  }
+  res = (float)(total/100.0)*_constPerUnit;
+  return res;
 }

@@ -1,6 +1,6 @@
 /*
   Project: Aquarium Controller
-  Version: 1.0
+  Version: 2.1
   Author: Rastislav Birka
 */
 
@@ -692,7 +692,7 @@ void printStatusToSerial(AQUA_datetime *datetimeStruct, float temp, float pH, in
 
 /*** setup function ***/
 void setup() {
-//  analogReference(EXTERNAL); //use AREF for reference voltage (connect 3.3V pin to AREF pin)
+  analogReference(EXTERNAL); //use AREF for reference voltage (connect 3.3V pin to AREF pin)
 
   if(AQUA_DEBUG_MODE_ON == 1) {
     Serial.begin(115200);
@@ -718,11 +718,15 @@ void setup() {
     Serial.println("pH object initialization...");
   }
   objPH.init(AQUA_PH_VOUT_PIN, AQUA_PH_VOCM_PIN, AQUA_PH_CALIBRATE_POINTS, AQUA_PH_CALIBRATE_ADDR, AQUA_ANALOG_VREF, AQUA_ADC_BIT_RESOLUTION); //VOUT pin, VOCM pin, number of calibrating points, calibrate address, vRef, ADC bit resolution
+//  objPH.useADC141S626(AQUA_SPI_PH_VOUT_PIN, AQUA_SPI_MISO_PIN, AQUA_SPI_MOSI_PIN, AQUA_SPI_SCLK_PIN, AQUA_SPI_SS_PIN);
+//  objPH.useADS1115(AQUA_ADS1115_SDA_PIN, AQUA_ADS1115_SCL_PIN);
 
   if(AQUA_DEBUG_MODE_ON == 1) {
     Serial.println("ORP object initialization...");
   }
   objORP.init(AQUA_ORP_VOUT_PIN, AQUA_ORP_VOCM_PIN, AQUA_ORP_CALIBRATE_POINTS, AQUA_ORP_CALIBRATE_ADDR, AQUA_ANALOG_VREF, AQUA_ADC_BIT_RESOLUTION); //VOUT pin, VOCM pin, number of calibrating points, calibrate address, vRef, ADC bit resolution
+//  objORP.useADC141S626(AQUA_SPI_ORP_VOUT_PIN, AQUA_SPI_MISO_PIN, AQUA_SPI_MOSI_PIN, AQUA_SPI_SCLK_PIN, AQUA_SPI_SS_PIN);
+//  objORP.useADS1115(AQUA_ADS1115_SDA_PIN, AQUA_ADS1115_SCL_PIN);
 
   if(AQUA_DEBUG_MODE_ON == 1) {
     Serial.print("Setup LCD:");Serial.print(AQUA_LCD_SERIAL);Serial.print(":");Serial.println(AQUA_LCD_SERIAL_SPEED);
